@@ -1,16 +1,20 @@
 package backend.academy.graph;
 
+import backend.academy.Coordinate;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import backend.academy.Coordinate;
-import lombok.Getter;
 
-@Getter class Graph {
+public class Graph {
     Map<Vertex, HashSet<Edge>> adjacencyList;
 
     public Graph() {
         this.adjacencyList = new HashMap<>();
+    }
+
+    public Map<Vertex, HashSet<Edge>> getAdjacencyList() {
+        return adjacencyList;
     }
 
     public void addVertex(Vertex vertex) {
@@ -41,7 +45,7 @@ import lombok.Getter;
 
     public static void main(String[] args) {
         Graph graph = new Graph();
-        Vertex a    = new Vertex(new Coordinate(0, 0));
+        Vertex a = new Vertex(new Coordinate(0, 0));
         Vertex b = new Vertex(new Coordinate(0, 1));
         Vertex c = new Vertex(new Coordinate(1, 0));
         Vertex d = new Vertex(new Coordinate(1, 1));

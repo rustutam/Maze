@@ -4,7 +4,7 @@ import backend.academy.Coordinate;
 import lombok.Getter;
 import java.util.Objects;
 
-@Getter class Edge {
+@Getter public class Edge {
     private final Vertex from;
     private final Vertex to;
     private final int weight;
