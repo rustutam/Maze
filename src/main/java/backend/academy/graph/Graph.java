@@ -4,7 +4,9 @@ import backend.academy.Coordinate;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Graph {
     Map<Vertex, HashSet<Edge>> adjacencyList;
@@ -17,6 +19,19 @@ public class Graph {
         return adjacencyList;
     }
 
+    public List<Edge> getEdges() {
+        return adjacencyList.values().stream()
+                .flatMap(HashSet::stream)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    public List<Vertex> getVertices(){
+        return adjacencyList.keySet().stream()
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
     public void addVertex(Vertex vertex) {
         adjacencyList.putIfAbsent(vertex, new HashSet<>());
     }
@@ -25,6 +40,7 @@ public class Graph {
         Edge edge = new Edge(from, to, weight);
         adjacencyList.get(from).add(edge);
         adjacencyList.get(to).add(edge);
+
     }
 
     public HashSet<Edge> getNeighbours(Vertex vertex) {
@@ -35,9 +51,13 @@ public class Graph {
         for (Map.Entry<Vertex, HashSet<Edge>> entry : adjacencyList.entrySet()) {
             Vertex vertex = entry.getKey();
             HashSet<Edge> edges = entry.getValue();
-            System.out.print("Vertex " + vertex + " is connected to: ");
+            System.out.print("Vertex (" + vertex.getCoordinate().row() +" "+ vertex.getCoordinate().col() + "):Edges:  ");
             for (Edge edge : edges) {
-                System.out.print(edge.to() + " (weight: " + edge.weight() + "), ");
+                int tox = edge.to().getCoordinate().col();
+                int toy = edge.to().getCoordinate().row();
+                int fromx = edge.from().getCoordinate().col();
+                int fromy = edge.from().getCoordinate().row();
+                System.out.print("(" + fromy +" "+ fromx + ")-(" + toy +" "+ tox + ") (weight: " + edge.weight() + "), ");
             }
             System.out.println();
         }

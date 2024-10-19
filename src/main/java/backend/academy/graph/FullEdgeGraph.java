@@ -4,6 +4,8 @@ import backend.academy.Coordinate;
 import backend.academy.Direction;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FullEdgeGraph {
     Coordinate startCoordinate;
@@ -16,6 +18,7 @@ public class FullEdgeGraph {
         this.width = width;
 
     }
+
     public Graph getFullEdgeGraph() {
         int x = adjustCoordinate(startCoordinate.col());
         int y = adjustCoordinate(startCoordinate.row());
@@ -76,5 +79,13 @@ public class FullEdgeGraph {
             }
         }
         return neighbours;
+    }
+
+    public static void main(String[] args) {
+        FullEdgeGraph fullEdgeGraph = new FullEdgeGraph(new Coordinate(1, 1), 6, 6);
+        Graph graph = fullEdgeGraph.getFullEdgeGraph();
+        Set<Edge> f = graph.adjacencyList.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
+        System.out.println(f.size());
+        graph.printGraph();
     }
 }
