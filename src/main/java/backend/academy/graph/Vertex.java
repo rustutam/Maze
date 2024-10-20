@@ -1,30 +1,43 @@
 package backend.academy.graph;
 
 import backend.academy.Coordinate;
-import lombok.Getter;
 import java.util.Objects;
+import lombok.Getter;
+import lombok.Setter;
 
-public class Vertex {
+@Getter public class Vertex {
 
     private final Coordinate coordinate;
-    @Getter private final int weight;
-    public Vertex(Coordinate coordinate, int weight) {
+    private final int weight;
+
+    @Setter
+    private VertexType type;
+
+    public Vertex(Coordinate coordinate, VertexType type) {
         this.coordinate = coordinate;
-        this.weight = weight;
+        this.type = type;
+        this.weight = getWeightByType(type);
     }
 
     public Vertex(Coordinate coordinate) {
-        this(coordinate, 1); // Значение по умолчанию для weight
+        this(coordinate, VertexType.NORMAL); // Значение по умолчанию для weight
     }
 
-
-    public Coordinate getCoordinate() {
-        return coordinate;
+    private int getWeightByType(VertexType type) {
+        return switch (type) {
+            case COIN -> 10;
+            case NORMAL -> 5;
+            case SAND -> 1;
+        };
     }
 
     @Override public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Vertex vertex = (Vertex) o;
         return Objects.equals(coordinate, vertex.coordinate);
     }
