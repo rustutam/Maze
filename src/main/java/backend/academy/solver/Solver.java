@@ -2,9 +2,13 @@ package backend.academy.solver;
 
 import backend.academy.Coordinate;
 import backend.academy.Maze;
+import backend.academy.graph.Graph;
+import backend.academy.graph.Vertex;
 
 import java.util.List;
 
 public interface Solver {
-    List<Coordinate> solve(Maze maze, Coordinate start, Coordinate end);
+
+    List<Vertex> solve(Maze maze, Coordinate start, Coordinate end);
+
 }
