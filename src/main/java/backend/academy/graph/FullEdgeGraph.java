@@ -2,6 +2,9 @@ package backend.academy.graph;
 
 import backend.academy.Coordinate;
 import backend.academy.Direction;
+import backend.academy.Maze;
+import backend.academy.visualization.ConsoleRenderer;
+import backend.academy.visualization.Renderer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -43,17 +46,21 @@ public class FullEdgeGraph {
             }
         }
     }
-
+//TODO: Нужно удалить ненужные ячейки.Пока хз как делать
     private void addEdges(Graph graph, int x, int y, int height, int width) {
-        List<Vertex> vertices = graph.getAdjacencyList().keySet().stream().toList();
+        List<Vertex> vertices = graph.getVertices();
         for (Vertex vertex : vertices) {
-            Coordinate coordinate = vertex.getCoordinate();
-            List<Coordinate> neighbours = getNeighbours(coordinate, height, width);
-            for (Coordinate neighbour : neighbours) {
-                vertices.stream()
-                    .filter(v -> v.getCoordinate().equals(neighbour))
-                    .findFirst()
-                    .ifPresent(neighbourVertex -> graph.addEdge(vertex, neighbourVertex, 2));
+            List<Vertex> neighbours = getNeighbours(vertex, height, width);
+            for (Vertex neighbour : neighbours) {
+                if (!vertices.contains(neighbour)){
+                    graph.addVertex(neighbour);
+                }
+
+                graph.addEdge(vertex, neighbour, 2);
+//                vertices.stream()
+//                    .filter(v -> v.getCoordinate().equals(neighbour))
+//                    .findFirst()
+//                    .ifPresent(neighbourVertex -> graph.addEdge(vertex, neighbourVertex, 2));
             }
         }
     }
@@ -70,22 +77,26 @@ public class FullEdgeGraph {
         };
     }
 
-    private List<Coordinate> getNeighbours(Coordinate coordinate, int height, int width) {
-        List<Coordinate> neighbours = new ArrayList<>();
+    private List<Vertex> getNeighbours(Vertex vertex, int height, int width) {
+        List<Vertex> neighbours = new ArrayList<>();
         for (Direction direction : Direction.values()) {
+            Coordinate coordinate = vertex.coordinate();
             Coordinate neighbour = move(coordinate, direction);
-            if (neighbour.row() >= 0 && neighbour.row() < height && neighbour.col() >= 0 && neighbour.col() < width) {
-                neighbours.add(neighbour);
-            }
+            neighbours.add(new Vertex(neighbour));
         }
         return neighbours;
     }
 
     public static void main(String[] args) {
-        FullEdgeGraph fullEdgeGraph = new FullEdgeGraph(new Coordinate(1, 1), 6, 6);
-        Graph graph = fullEdgeGraph.getFullEdgeGraph();
-        Set<Edge> f = graph.adjacencyList.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
-        System.out.println(f.size());
-        graph.printGraph();
+//        FullEdgeGraph fullEdgeGraph = new FullEdgeGraph(new Coordinate(1, 1), 6, 6);
+//        Graph graph = fullEdgeGraph.getFullEdgeGraph();
+//        Set<Edge> f = graph.adjacencyList.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
+//        System.out.println(f.size());
+//        graph.printGraph();
+//        Maze maze = new Maze(5, 5, new FullEdgeGraph(new Coordinate(0, 1), 6, 5).getFullEdgeGraph());
+//        Renderer visual= new ConsoleRenderer();
+//        System.out.println(visual.render(maze));
+
     }
+
 }
