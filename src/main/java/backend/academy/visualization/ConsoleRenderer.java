@@ -7,6 +7,14 @@ import backend.academy.graph.Vertex;
 import java.util.List;
 
 public class ConsoleRenderer implements Renderer{
+    private final String WALL  = "⬜️";
+    private final String SPACE = "⬛️";
+    private final String START = "🟩";
+    private final String END   = "🟥";
+    private final String PATH  = "🟨";
+    private final String COIN  = "🪙";
+    private final String SAND  = "🏖️";
+
     @Override
     public String render(Maze maze) {
         int height = maze.height();
@@ -14,28 +22,38 @@ public class ConsoleRenderer implements Renderer{
         Graph graph = maze.graph();
         StringBuilder sb = new StringBuilder();
 
-        String wall = "█";
-        String passage = " ";
-
         // Верхняя рамка
-        sb.append(wall.repeat(width + 2)).append("\n");
+        sb.append(WALL.repeat(width + 2)).append("\n");
 
         for (int row = 0;row <height;row++){
-            sb.append(wall);
+            sb.append(WALL);
             for (int col = 0;col <width;col++){
                 Coordinate coordinate = new Coordinate(row,col);
-                if (graph.getVertices().contains(new Vertex(coordinate))) {
-                    sb.append(passage);
-                }
-                else {
-                    sb.append(wall);
+                Vertex vertex = graph.getVertices().stream()
+                    .filter(v -> v.coordinate().equals(coordinate))
+                    .findFirst()
+                    .orElse(null);
+                if (vertex != null) {
+                    switch (vertex.type()) {
+                        case COIN:
+                            sb.append(COIN);
+                            break;
+                        case SAND:
+                            sb.append(SAND);
+                            break;
+                        case NORMAL:
+                            sb.append(SPACE);
+                            break;
+                    }
+                } else {
+                    sb.append(WALL);
                 }
             }
-            sb.append(wall); // Правая рамка
+            sb.append(WALL); // Правая рамка
             sb.append("\n"); // Правая рамка
         }
         // Нижняя рамка
-        sb.append(wall.repeat(width + 2)).append("\n");
+        sb.append(WALL.repeat(width + 2)).append("\n");
         return sb.toString();
     }
 
@@ -45,31 +63,44 @@ public class ConsoleRenderer implements Renderer{
         int width = maze.width();
         Graph graph = maze.graph();
         StringBuilder sb = new StringBuilder();
-        String wall = "█";
-        String passage = " ";
-        String findPath = "∙";
+
         // Верхняя рамка
-        sb.append(wall.repeat(width + 2)).append("\n");
+        sb.append(WALL.repeat(width + 2)).append("\n");
 
         for (int row = 0; row < height; row++) {
-            sb.append(wall); // Левая рамка
+            sb.append(WALL); // Левая рамка
             for (int col = 0; col < width; col++) {
                 Coordinate coordinate = new Coordinate(row, col);
-                Vertex vertex = new Vertex(coordinate);
-                if (path.contains(vertex)) {
-                    sb.append(findPath); // Путь
-                } else if (graph.getVertices().contains(new Vertex(coordinate))) {
-                    sb.append(passage); // Проход
+                Vertex vertex = graph.getVertices().stream()
+                    .filter(v -> v.coordinate().equals(coordinate))
+                    .findFirst()
+                    .orElse(null);
+                if (vertex != null) {
+                    switch (vertex.type()) {
+                        case COIN:
+                            sb.append(COIN); // Монета
+                            break;
+                        case SAND:
+                            sb.append(SAND); // Песок
+                            break;
+                        case NORMAL:
+                            if (path.contains(vertex)) {
+                                sb.append(PATH); // Путь
+                            } else {
+                                sb.append(SPACE); // Проход
+                            }
+                            break;
+                    }
                 } else {
-                    sb.append(wall); // Стена
+                    sb.append(WALL); // Стена
                 }
             }
-            sb.append(wall); // Правая рамка
+            sb.append(WALL); // Правая рамка
             sb.append("\n"); // Правая рамка
         }
 
         // Нижняя рамка
-        sb.append(wall.repeat(width + 2)).append("\n");
+        sb.append(WALL.repeat(width + 2)).append("\n");
 
         return sb.toString();
     }
