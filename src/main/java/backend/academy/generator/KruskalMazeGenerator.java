@@ -6,6 +6,8 @@ import backend.academy.graph.Edge;
 import backend.academy.graph.FullEdgeGraph;
 import backend.academy.graph.Graph;
 import backend.academy.graph.Vertex;
+import backend.academy.visualization.ConsoleRenderer;
+import backend.academy.visualization.Renderer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ public class KruskalMazeGenerator implements Generator {
         Graph graph = new Graph();
 
         List<Edge> allEdges = fullGraph.getEdges();
+
         Map<Vertex, Integer> connectiveComponent = getConnectiveComponent(fullGraph.getVertices());
         while (!allEdges.isEmpty()) {
             Edge edge = allEdges.get(random.nextInt(allEdges.size()));
@@ -44,7 +47,7 @@ public class KruskalMazeGenerator implements Generator {
 
         }
 
-        return new Maze(height, width, graph.addIntermediateVertices());
+        return new Maze(height, width, graph.addIntermediateVertices(), random);
     }
 
     private Map<Vertex, Integer> mergeConnectiveComponent(

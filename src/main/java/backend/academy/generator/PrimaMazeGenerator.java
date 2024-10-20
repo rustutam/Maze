@@ -56,7 +56,7 @@ public class PrimaMazeGenerator implements Generator {
         System.out.println();
         minGraph.addIntermediateVertices().printGraph();
         System.out.println();
-        return new Maze(height, width, minGraph.addIntermediateVertices());
+        return new Maze(height, width, minGraph.addIntermediateVertices(), random);
     }
 
     public static void main(String[] args) {

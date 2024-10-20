@@ -47,16 +47,24 @@ public class Graph {
         return adjacencyList.get(vertex);
     }
 
+    public void deleteVertex(Vertex vertex) {
+        adjacencyList.remove(vertex);
+        for (Map.Entry<Vertex, HashSet<Edge>> entry : adjacencyList.entrySet()) {
+            HashSet<Edge> edges = entry.getValue();
+            edges.removeIf(edge -> edge.from().equals(vertex) || edge.to().equals(vertex));
+        }
+    }
+
     public void printGraph() {
         for (Map.Entry<Vertex, HashSet<Edge>> entry : adjacencyList.entrySet()) {
             Vertex vertex = entry.getKey();
             HashSet<Edge> edges = entry.getValue();
-            System.out.print("Vertex (" + vertex.getCoordinate().row() +" "+ vertex.getCoordinate().col() + "):Edges:  ");
+            System.out.print("Vertex (" + vertex.coordinate().row() +" "+ vertex.coordinate().col() + "):Edges:  ");
             for (Edge edge : edges) {
-                int tox = edge.to().getCoordinate().col();
-                int toy = edge.to().getCoordinate().row();
-                int fromx = edge.from().getCoordinate().col();
-                int fromy = edge.from().getCoordinate().row();
+                int tox = edge.to().coordinate().col();
+                int toy = edge.to().coordinate().row();
+                int fromx = edge.from().coordinate().col();
+                int fromy = edge.from().coordinate().row();
                 System.out.print("(" + fromy +" "+ fromx + ")-(" + toy +" "+ tox + ") (weight: " + edge.weight() + "), ");
             }
             System.out.println();
@@ -86,8 +94,8 @@ public class Graph {
             Vertex v1 = edge.from();
             Vertex v2 = edge.to();
             Coordinate midCoordinate = new Coordinate(
-                (v1.getCoordinate().row() + v2.getCoordinate().row()) / 2,
-                (v1.getCoordinate().col() + v2.getCoordinate().col()) / 2
+                (v1.coordinate().row() + v2.coordinate().row()) / 2,
+                (v1.coordinate().col() + v2.coordinate().col()) / 2
             );
             Vertex midVertex = new Vertex(midCoordinate);
             newGraph.addVertex(midVertex);
