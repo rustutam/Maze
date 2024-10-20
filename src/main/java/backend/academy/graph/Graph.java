@@ -63,6 +63,41 @@ public class Graph {
         }
     }
 
+    public Vertex getSecondVertex(Edge edge, Vertex vertex) throws Exception {
+        if (edge.from().equals(vertex)) {
+            return edge.to();
+        }
+        else if (edge.to().equals(vertex)){
+            return edge.from();
+        }
+        else {
+            throw new Exception();
+        }
+    }
+
+    public Graph addIntermediateVertices() {
+        Graph newGraph = new Graph();
+
+        for (Vertex vertex : this.getVertices()) {
+            newGraph.addVertex(vertex);
+        }
+
+        for (Edge edge : this.getEdges()) {
+            Vertex v1 = edge.from();
+            Vertex v2 = edge.to();
+            Coordinate midCoordinate = new Coordinate(
+                (v1.getCoordinate().row() + v2.getCoordinate().row()) / 2,
+                (v1.getCoordinate().col() + v2.getCoordinate().col()) / 2
+            );
+            Vertex midVertex = new Vertex(midCoordinate);
+            newGraph.addVertex(midVertex);
+            newGraph.addEdge(v1, midVertex, edge.weight());
+            newGraph.addEdge(midVertex, v2, edge.weight());
+        }
+
+        return newGraph;
+    }
+
     public static void main(String[] args) {
         Graph graph = new Graph();
         Vertex a = new Vertex(new Coordinate(0, 0));

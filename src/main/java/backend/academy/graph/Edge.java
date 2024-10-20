@@ -19,7 +19,17 @@ import java.util.stream.Collectors;
         this.to = to;
         this.weight = weight;
     }
-
+    public Vertex getSecondVertex(Vertex vertex) {
+        if (vertex.equals(from)) {
+            return to;
+        }
+        else if (vertex.equals(to)) {
+            return from;
+        }
+        else {
+            throw new IllegalArgumentException("Vertex is not part of this edge");
+        }
+    }
     @Override public boolean equals(Object o) {
         if (this == o) {
             return true;

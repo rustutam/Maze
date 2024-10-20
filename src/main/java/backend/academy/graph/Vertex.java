@@ -1,15 +1,22 @@
 package backend.academy.graph;
 
 import backend.academy.Coordinate;
+import lombok.Getter;
 import java.util.Objects;
 
 public class Vertex {
 
     private final Coordinate coordinate;
+    @Getter private final int weight;
+    public Vertex(Coordinate coordinate, int weight) {
+        this.coordinate = coordinate;
+        this.weight = weight;
+    }
 
     public Vertex(Coordinate coordinate) {
-        this.coordinate = coordinate;
+        this(coordinate, 1); // Значение по умолчанию для weight
     }
+
 
     public Coordinate getCoordinate() {
         return coordinate;
