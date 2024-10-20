@@ -52,8 +52,11 @@ public class PrimaMazeGenerator implements Generator {
             visitedVertex.add(nextVertex);
 
         }
-
-        return new Maze(height, width, minGraph);
+        minGraph.printGraph();
+        System.out.println();
+        minGraph.addIntermediateVertices().printGraph();
+        System.out.println();
+        return new Maze(height, width, minGraph.addIntermediateVertices());
     }
 
     public static void main(String[] args) {

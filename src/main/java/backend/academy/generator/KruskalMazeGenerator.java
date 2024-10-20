@@ -44,7 +44,7 @@ public class KruskalMazeGenerator implements Generator {
 
         }
 
-        return new Maze(height, width, graph);
+        return new Maze(height, width, graph.addIntermediateVertices());
     }
 
     private Map<Vertex, Integer> mergeConnectiveComponent(
@@ -71,6 +71,7 @@ public class KruskalMazeGenerator implements Generator {
         }
         return connectiveComponent;
     }
+
 
     public static void main(String[] args) {
         KruskalMazeGenerator kruskalMazeGenerator = new KruskalMazeGenerator(new Random());
