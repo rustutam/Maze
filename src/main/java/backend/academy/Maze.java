@@ -27,6 +27,9 @@ public final class Maze {
     }
 
     public void addNewSurfaces(VertexType type, int coinCount) {
+        if (coinCount<=0){
+            return;
+        }
         List<Vertex> vertices = graph.getVertices();
         vertices = vertices.stream()
             .filter(vertex -> vertex.type() == VertexType.NORMAL)
@@ -46,6 +49,10 @@ public final class Maze {
             randomVertex.type(type);
             coinCount--;
         }
+    }
+
+    public List<Coordinate> getCoordinates(){
+        return graph().getVertices().stream().map(Vertex::coordinate).collect(Collectors.toList());
     }
 }
 

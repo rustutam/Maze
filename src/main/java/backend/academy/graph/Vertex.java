@@ -25,9 +25,9 @@ import lombok.Setter;
 
     private int getWeightByType(VertexType type) {
         return switch (type) {
-            case COIN -> 10;
-            case NORMAL -> 5;
-            case SAND -> 1;
+            case COIN -> 100;
+            case NORMAL -> 1;
+            case SAND -> 0;
         };
     }
 
