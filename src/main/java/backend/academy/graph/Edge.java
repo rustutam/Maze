@@ -30,6 +30,11 @@ import java.util.stream.Collectors;
             throw new IllegalArgumentException("Vertex is not part of this edge");
         }
     }
+
+    public Vertex getMiddleVertex() {
+        return new Vertex(new Coordinate((from.coordinate().row() + to.coordinate().row()) / 2,
+                                         (from.coordinate().col() + to.coordinate().col()) / 2));
+    }
     @Override public boolean equals(Object o) {
         if (this == o) {
             return true;

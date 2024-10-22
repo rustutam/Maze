@@ -28,9 +28,38 @@ public class FullEdgeGraph {
         Graph fullGraph = new Graph();
         addVertices(fullGraph, x, y, height, width);
         addEdges(fullGraph, x, y, height, width);
+        fullGraph = deleteUnnecessaryVertices(fullGraph);
+//        return deleteUnnecessaryVertices(fullGraph);
         return fullGraph;
     }
 
+    private Graph deleteUnnecessaryVertices(Graph graph) {
+        List<Vertex> vertices = graph.getVertices();
+        vertices = vertices.stream()
+            .filter(v -> !isWithinBounds(v)).toList();
+
+        for (Vertex vertex : vertices) {
+             Edge neighboursEdge =  graph.getNeighbours(vertex).stream().findFirst().orElse(null);
+             if (neighboursEdge != null) {
+                 Vertex middleVertex = neighboursEdge.getMiddleVertex();
+                 Vertex neighbour = neighboursEdge.getSecondVertex(vertex);
+                 if (isWithinBounds(middleVertex)) {
+                     graph.addVertex(middleVertex);
+                     graph.addEdge(neighbour, middleVertex, 2);
+
+                 }
+                 graph.deleteVertex(vertex);
+             }
+        }
+
+
+        return graph;
+    }
+    private boolean isWithinBounds(Vertex vertex) {
+        Coordinate coordinate = vertex.coordinate();
+        return coordinate.row() >= 0 && coordinate.row() < height &&
+            coordinate.col() >= 0 && coordinate.col() < width;
+    }
     private int adjustCoordinate(int coordinate) {
         while (coordinate >= 2) {
             coordinate -= 2;
@@ -46,13 +75,14 @@ public class FullEdgeGraph {
             }
         }
     }
-//TODO: Нужно удалить ненужные ячейки.Пока хз как делать
+
+    //TODO: Нужно удалить ненужные ячейки.Пока хз как делать
     private void addEdges(Graph graph, int x, int y, int height, int width) {
         List<Vertex> vertices = graph.getVertices();
         for (Vertex vertex : vertices) {
             List<Vertex> neighbours = getNeighbours(vertex, height, width);
             for (Vertex neighbour : neighbours) {
-                if (!vertices.contains(neighbour)){
+                if (!vertices.contains(neighbour)) {
                     graph.addVertex(neighbour);
                 }
 
