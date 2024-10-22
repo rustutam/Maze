@@ -52,11 +52,6 @@ public class DijkstraSolver implements Solver {
                 }
             }
         }
-        List<Vertex> path = new ArrayList<>();
-        for (Vertex at = endVertex; at != null; at = predecessors.get(at)) {
-            path.add(at);
-        }
-        Collections.reverse(path);
 
 //        Graph solveGraph = new Graph();
 //        for (Vertex vertex: path)
@@ -73,8 +68,17 @@ public class DijkstraSolver implements Solver {
 //            solveGraph.addEdge(from, to, weight);
 //        }
 
-        return path;
+        return reconstructPath(predecessors, endVertex);
 
+    }
+
+    private List<Vertex> reconstructPath(Map<Vertex, Vertex> predecessors, Vertex endVertex) {
+        List<Vertex> path = new ArrayList<>();
+        for (Vertex at = endVertex; at != null; at = predecessors.get(at)) {
+            path.add(at);
+        }
+        Collections.reverse(path);
+        return path;
     }
 
     Vertex getMinDistanceVertex(Map<Vertex, Integer> distance, Set<Vertex> visitedVertex) {
