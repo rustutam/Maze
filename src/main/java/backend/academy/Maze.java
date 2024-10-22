@@ -1,18 +1,12 @@
 package backend.academy;
 
-import backend.academy.graph.Edge;
 import backend.academy.graph.Graph;
 import backend.academy.graph.Vertex;
 import backend.academy.graph.VertexType;
-import lombok.Getter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.Getter;
 
 public final class Maze {
     @Getter
@@ -40,7 +34,7 @@ public final class Maze {
 
         int vertexCount = vertices.size();
 
-        if (coinCount> vertexCount){
+        if (coinCount > vertexCount) {
             coinCount = vertexCount;
         }
 
@@ -50,55 +44,9 @@ public final class Maze {
             vertices.remove(randomIndex);
             vertexCount = vertices.size();
             randomVertex.type(type);
-            coinCount --;
+            coinCount--;
         }
     }
-    public void printMaze() {
-        char[][] grid = new char[height][width];
-
-        // Initialize the grid with spaces
-        for (int i = 0; i < grid.length; i++) {
-            Arrays.fill(grid[i], '#');
-        }
-
-        // Mark vertices with '0'
-        for (Vertex vertex : graph.getAdjacencyList().keySet()) {
-            int y = vertex.coordinate().row();
-            int x = vertex.coordinate().col();
-            grid[x][y] = '0';
-        }
-
-        // Mark edges with '-'
-        for (Map.Entry<Vertex, HashSet<Edge>> entry : graph.getAdjacencyList().entrySet()) {
-            Vertex from = entry.getKey();
-            int fromX = from.coordinate().row();
-            int fromY = from.coordinate().col();
-            for (Edge edge : entry.getValue()) {
-                Vertex to = edge.to();
-                int toX = to.coordinate().row();
-                int toY = to.coordinate().col();
-                if (fromX == toX) {
-                    grid[fromX][(fromY + toY) / 2] = '-';
-                } else if (fromY == toY) {
-                    grid[(fromX + toX) / 2][fromY] = '-';
-                }
-            }
-        }
-
-        // Print the grid
-        for (char[] row : grid) {
-            for (char cell : row) {
-                System.out.print(cell);
-            }
-            System.out.println();
-        }
-    }
-//    public void updateCell(Coordinate coordinate, Cell.Type type){
-//        int x = coordinate.row();
-//        int y = coordinate.col();
-//        grid[x][y] = new Cell(x, y, type);
-//    }
-
 }
 
 
