@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class Maze {
     @Getter
@@ -33,7 +34,12 @@ public final class Maze {
 
     public void addNewSurfaces(VertexType type, int coinCount) {
         List<Vertex> vertices = graph.getVertices();
+        vertices = vertices.stream()
+            .filter(vertex -> vertex.type() == VertexType.NORMAL)
+            .collect(Collectors.toList());
+
         int vertexCount = vertices.size();
+
         if (coinCount> vertexCount){
             coinCount = vertexCount;
         }
@@ -41,9 +47,8 @@ public final class Maze {
         while (coinCount > 0) {
             int randomIndex = random.nextInt(vertexCount);
             Vertex randomVertex = vertices.get(randomIndex);
-            if (randomVertex.type() != VertexType.NORMAL) {
-                continue;
-            }
+            vertices.remove(randomIndex);
+            vertexCount = vertices.size();
             randomVertex.type(type);
             coinCount --;
         }
