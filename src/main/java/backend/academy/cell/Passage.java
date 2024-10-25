@@ -2,15 +2,17 @@ package backend.academy.cell;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-
-@Setter @Getter
+@Setter
+@Getter
+@ToString(callSuper = true)
 public class Passage extends Cell {
-    private PassageType type;
+    private PassageType passageType;
 
-    public Passage(int row, int col, PassageType type) {
-        super(row, col);
-        this.type = type;
+    public Passage(int row, int col) {
+        super(row, col, CellType.PASSAGE);
+        this.passageType = PassageType.NORMAL;
     }
 
     public enum PassageType {
@@ -20,8 +22,8 @@ public class Passage extends Cell {
     }
 
     public static void main(String[] args) {
-        Passage cell = new Passage(1, 2,PassageType.NORMAL);
-        cell.type(PassageType.COIN);
+        Passage cell = new Passage(1, 2);
+        System.out.println(cell.type());
+        System.out.println(cell.passageType());
     }
-
 }
