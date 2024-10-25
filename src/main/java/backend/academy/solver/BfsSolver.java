@@ -1,7 +1,5 @@
 package backend.academy.solver;
 
-import backend.academy.Coordinate;
-import backend.academy.Maze;
 import backend.academy.graph.Graph;
 import backend.academy.graph.Vertex;
 import java.util.ArrayList;
@@ -15,12 +13,9 @@ import java.util.Queue;
 
 public class BfsSolver implements Solver {
     @Override
-    public List<Vertex> solve(Maze maze, Coordinate start, Coordinate end) {
+    public List<Vertex> solve(Graph graph, Vertex startVertex, Vertex endVertex) {
         Queue<Vertex> queue = new LinkedList<>();
 
-        Graph graph = maze.graph();
-        Vertex startVertex = new Vertex(start);
-        Vertex endVertex = new Vertex(end);
         Map<Vertex, Vertex> predecessors = new HashMap<>();
         HashSet<Vertex> visited = new HashSet<>();
         queue.add(startVertex);

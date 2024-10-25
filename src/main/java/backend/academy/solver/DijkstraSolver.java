@@ -17,11 +17,7 @@ import java.util.stream.Collectors;
 
 public class DijkstraSolver implements Solver {
     @Override
-    public List<Vertex> solve(Maze maze, Coordinate start, Coordinate end) {
-        Graph graph = maze.graph();
-        Vertex startVertex = new Vertex(start);
-        Vertex endVertex = new Vertex(end);
-
+    public List<Vertex> solve(Graph graph, Vertex startVertex, Vertex endVertex) {
         List<Vertex> allVertex = graph.getVertices();
 
         Set<Vertex> visitedVertex = new HashSet<>();

@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface Solver {
 
-    List<Vertex> solve(Maze maze, Coordinate start, Coordinate end);
+    List<Vertex> solve(Graph graph, Vertex start, Vertex end);
 
 }
