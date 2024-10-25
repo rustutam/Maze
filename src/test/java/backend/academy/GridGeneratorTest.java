@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GridGeneratorTest {
 
     @Test
-    void getMazeListModelWithFirstStartCoordinate() {
+    void testGetMazeListModelWithFirstStartCoordinate() {
         //Arrange
         int height = 5;
         int width = 5;
@@ -69,7 +69,7 @@ class GridGeneratorTest {
 
     }
     @Test
-    void getMazeListModelWithSecondStartCoordinate() {
+    void testGetMazeListModelWithSecondStartCoordinate() {
         //Arrange
         int height = 5;
         int width = 5;
