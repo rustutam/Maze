@@ -1,7 +1,8 @@
 package backend.academy.generator;
 
 import backend.academy.Maze;
+import backend.academy.graph.Graph;
 
 public interface Generator {
-    Maze generate(int height, int width);
+    Graph generate(Graph graph);
 }

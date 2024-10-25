@@ -1,9 +1,6 @@
 package backend.academy.generator;
 
-import backend.academy.Coordinate;
-import backend.academy.Maze;
 import backend.academy.graph.Edge;
-import backend.academy.graph.FullEdgeGraph;
 import backend.academy.graph.Graph;
 import backend.academy.graph.Vertex;
 import java.util.ArrayList;
@@ -13,6 +10,7 @@ import java.util.Random;
 import java.util.Set;
 
 public class PrimaMazeGenerator implements Generator {
+
     private final Random random;
 
     public PrimaMazeGenerator(Random random) {
@@ -20,15 +18,13 @@ public class PrimaMazeGenerator implements Generator {
     }
 
     @Override
-    public Maze generate(int height, int width) {
-        Coordinate startCoordinate = new Coordinate(random.nextInt(height), random.nextInt(width));
-        Vertex startVertex = new Vertex(startCoordinate);
-        Graph fullGraph = new FullEdgeGraph(startCoordinate, height, width).getFullEdgeGraph();
-        List<Vertex> allVertex = fullGraph.getVertices();
+    public Graph generate(Graph graph) {
+        List<Vertex> allVertex = graph.getVertices();
+        Vertex startVertex = allVertex.get(random.nextInt(allVertex.size()));
         Set<Vertex> visitedVertex = new HashSet<>();
 
         List<Edge> neighboursEdges =
-            new ArrayList<>(fullGraph.getNeighbours(startVertex).stream().toList());
+            new ArrayList<>(graph.getNeighbours(startVertex).stream().toList());
         visitedVertex.add(startVertex);
 
         Graph minGraph = new Graph();
@@ -45,24 +41,21 @@ public class PrimaMazeGenerator implements Generator {
 
             Vertex nextVertex = visitedVertex.contains(v1) ? v2 : v1;
             minGraph.addVertex(nextVertex);
-            minGraph.addEdge(v1, v2, edge.weight());
+            minGraph.addEdge(v1, v2);
             neighboursEdges.remove(edge);
-            neighboursEdges.addAll(fullGraph.getNeighbours(nextVertex));
+            neighboursEdges.addAll(graph.getNeighbours(nextVertex));
 
             visitedVertex.add(nextVertex);
 
         }
-        minGraph.printGraph();
-        System.out.println();
-        minGraph.addIntermediateVertices().printGraph();
-        System.out.println();
-        return new Maze(height, width, minGraph.addIntermediateVertices(), random);
+
+        return minGraph;
     }
 
     public static void main(String[] args) {
-        PrimaMazeGenerator primaMazeGenerator = new PrimaMazeGenerator(new Random());
-        Maze maze = primaMazeGenerator.generate(5, 5);
-        maze.graph().printGraph();
+//        PrimaMazeGenerator primaMazeGenerator = new PrimaMazeGenerator(new Random());
+//        Maze maze = primaMazeGenerator.generate(5, 5);
+//        maze.graph().printGraph();
     }
 }
 

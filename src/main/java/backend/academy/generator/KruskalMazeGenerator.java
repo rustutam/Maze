@@ -1,13 +1,8 @@
 package backend.academy.generator;
 
-import backend.academy.Coordinate;
-import backend.academy.Maze;
 import backend.academy.graph.Edge;
-import backend.academy.graph.FullEdgeGraph;
 import backend.academy.graph.Graph;
 import backend.academy.graph.Vertex;
-import backend.academy.visualization.ConsoleRenderer;
-import backend.academy.visualization.Renderer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,15 +17,12 @@ public class KruskalMazeGenerator implements Generator {
     }
 
     @Override
-    public Maze generate(int height, int width) {
-        Coordinate startCoordinate = new Coordinate(random.nextInt(height), random.nextInt(width));
-        Vertex startVertex = new Vertex(startCoordinate);
-        Graph fullGraph = new FullEdgeGraph(startCoordinate, height, width).getFullEdgeGraph();
-        Graph graph = new Graph();
+    public Graph generate(Graph graph) {
+        Graph minGraph = new Graph();
 
-        List<Edge> allEdges = fullGraph.getEdges();
+        List<Edge> allEdges = graph.getEdges();
 
-        Map<Vertex, Integer> connectiveComponent = getConnectiveComponent(fullGraph.getVertices());
+        Map<Vertex, Integer> connectiveComponent = getConnectiveComponent(graph.getVertices());
         while (!allEdges.isEmpty()) {
             Edge edge = allEdges.get(random.nextInt(allEdges.size()));
             Vertex v1 = edge.from();
@@ -38,16 +30,16 @@ public class KruskalMazeGenerator implements Generator {
             if (!Objects.equals(connectiveComponent.get(v1), connectiveComponent.get(v2))) {
 
                 connectiveComponent = mergeConnectiveComponent(connectiveComponent, v1, v2);
-                graph.addVertex(v1);
-                graph.addVertex(v2);
-                graph.addEdge(v1, v2, edge.weight());
+                minGraph.addVertex(v1);
+                minGraph.addVertex(v2);
+                minGraph.addEdge(v1, v2);
             }
 
             allEdges.remove(edge);
 
         }
 
-        return new Maze(height, width, graph.addIntermediateVertices(), random);
+        return minGraph;
     }
 
     private Map<Vertex, Integer> mergeConnectiveComponent(
@@ -75,10 +67,6 @@ public class KruskalMazeGenerator implements Generator {
         return connectiveComponent;
     }
 
-
     public static void main(String[] args) {
-        KruskalMazeGenerator kruskalMazeGenerator = new KruskalMazeGenerator(new Random());
-        Maze maze = kruskalMazeGenerator.generate(5, 5);
-        maze.graph().printGraph();
     }
 }
