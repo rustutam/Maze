@@ -1,49 +1,52 @@
 package backend.academy.graph;
 
-import backend.academy.Coordinate;
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter public class Vertex {
+public class Vertex {
 
-    private final Coordinate coordinate;
-    private final int weight;
-
+    @Getter
     @Setter
-    private VertexType type;
+    private UUID uuid;
+    @Getter
+    @Setter
+    private int weight;
 
-    public Vertex(Coordinate coordinate, VertexType type) {
-        this.coordinate = coordinate;
-        this.type = type;
-        this.weight = getWeightByType(type);
+//    public Vertex(UUID uuid,Integer weight) {
+//        this.uuid = uuid;
+//        this.weight = weight;
+//    }
+
+    public Vertex(UUID uuid) {
+        this.uuid = uuid;
+        this.weight = 1;
     }
 
-    public Vertex(Coordinate coordinate) {
-        this(coordinate, VertexType.NORMAL); // Значение по умолчанию для weight
+    public Vertex(){
+        this.uuid = UUID.randomUUID();
+        this.weight = 1;
     }
 
-    private int getWeightByType(VertexType type) {
-        return switch (type) {
-            case COIN -> 100;
-            case NORMAL -> 1;
-            case SAND -> 0;
-        };
-    }
 
-    @Override public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Vertex vertex = (Vertex) o;
-        return Objects.equals(coordinate, vertex.coordinate);
+        return uuid == vertex.uuid;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(coordinate);
+        return Objects.hash(uuid);
+    }
+
+    public static void main(String[] args) {
+//        List<Vertex> a = List.of(new Vertex(1), new Vertex(2));
+//        Vertex vertex = new Vertex(1);
+//        System.out.println(a.contains(vertex));
     }
 }
