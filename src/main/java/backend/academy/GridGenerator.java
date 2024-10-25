@@ -5,7 +5,6 @@ import backend.academy.cell.Passage;
 import backend.academy.cell.Wall;
 import backend.academy.models.MazeListModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,8 @@ public class GridGenerator {
     public MazeListModel getMazeListModel(Coordinate startCoordinate) {
         generateFullWallMaze();
         generateGrid(startCoordinate);
-        updateCoordinateNeighbours();
+        addLinks();
+        updateMazeList();
 
         return new MazeListModel(mazeList, coordinateNeighbours, height, width);
     }
@@ -44,54 +44,39 @@ public class GridGenerator {
 
         for (int i = y; i < height; i += 2) {
             for (int j = x; j < width; j += 2) {
-                mazeList[i][j] = new Passage(i, j);
-                addBoundaryCoordinates(new Coordinate(i, j));
+                coordinateNeighbours.put(new Coordinate(i, j), new ArrayList<>());
             }
         }
     }
 
-    private void addBoundaryCoordinates(Coordinate coordinate) {
-        List<Coordinate> maybeNeighboursCoordinate = getMaybeNeighbours(coordinate, 2);
-
-//        //добавляем соседей в мапу
-//        neighboursCoordinate.stream()
-//            .filter(this::isWithinBounds)
-//            .forEach(cord -> addCoordinateNeighbour(coordinate, cord));
-
-        //добавляем соседей, которые лежат вне лабиринта в мапу
-        maybeNeighboursCoordinate.stream()
-            .filter(cord -> !isWithinBounds(cord))
-            .map(cord -> getMiddleCoordinate(coordinate, cord))
-            .filter(this::isWithinBounds)
-            .forEach(
-                cord -> {
-                    mazeList[cord.row()][cord.col()] = new Passage(cord.row(), cord.col());
-                });
-    }
-
-    private void updateCoordinateNeighbours() {
-        Arrays.stream(mazeList)
-            .flatMap(Arrays::stream)
-            .filter(cell -> cell.type() == Cell.CellType.PASSAGE)
-            .map(cell -> new Coordinate(cell.row(), cell.col()))
+    private void addLinks() {
+        List<Coordinate> allCoordinates = coordinateNeighbours.keySet().stream().toList();
+        allCoordinates
             .forEach(cord -> {
-
-                List<Coordinate> maybeNeighboursCoordinateByStep2 = getMaybeNeighbours(cord, 2);
-                List<Coordinate> maybeNeighboursCoordinateByStep1 = getMaybeNeighbours(cord, 1);
-                List<Coordinate> maybeNeighboursCoordinate = new ArrayList<>();
-                maybeNeighboursCoordinate.addAll(maybeNeighboursCoordinateByStep2);
-                maybeNeighboursCoordinate.addAll(maybeNeighboursCoordinateByStep1);
-                maybeNeighboursCoordinate.stream()
-                    .filter(this::isWithinBounds)
-                    .filter(coordinate -> mazeList[coordinate.row()][coordinate.col()].type() == Cell.CellType.PASSAGE)
-                    .forEach(c -> addCoordinateNeighbour(cord, c));
+                List<Coordinate> neighbours = getNeighbours(cord);
+                for (Coordinate neighbour : neighbours) {
+                    if (isWithinBounds(neighbour)) {
+                        addCoordinateNeighbour(cord, neighbour);
+                    } else {
+                        Coordinate middleCoordinate = getMiddleCoordinate(cord, neighbour);
+                        if (isWithinBounds(middleCoordinate)) {
+                            addCoordinateNeighbour(cord, middleCoordinate);
+                            addCoordinateNeighbour(middleCoordinate, cord);
+                        }
+                    }
+                }
             });
     }
 
-    private List<Coordinate> getMaybeNeighbours(Coordinate coordinate,int step) {
+    private void updateMazeList() {
+        coordinateNeighbours.keySet()
+            .forEach(cord -> mazeList[cord.row()][cord.col()] = new Passage(cord.row(), cord.col()));
+    }
+
+    private List<Coordinate> getNeighbours(Coordinate coordinate) {
         List<Coordinate> neighboursCoordinate = new ArrayList<>();
         for (Direction direction : Direction.values()) {
-            Coordinate newCoordinate = move(coordinate, direction, step);
+            Coordinate newCoordinate = move(coordinate, direction);
             neighboursCoordinate.add(newCoordinate);
         }
         return neighboursCoordinate;
@@ -108,8 +93,8 @@ public class GridGenerator {
             coordinate.col() >= 0 && coordinate.col() < width;
     }
 
-    private void addCoordinateNeighbour(Coordinate key, Coordinate value) {
-        coordinateNeighbours.computeIfAbsent(key, _ -> new ArrayList<>()).add(value);
+    private void addCoordinateNeighbour(Coordinate c1, Coordinate c2) {
+        coordinateNeighbours.computeIfAbsent(c1, _ -> new ArrayList<>()).add(c2);
     }
 
     private int adjustCoordinate(int coordinate) {
@@ -119,21 +104,21 @@ public class GridGenerator {
         return coordinate;
     }
 
-    private Coordinate move(Coordinate coordinate, Direction direction, Integer step) {
+    private Coordinate move(Coordinate coordinate, Direction direction) {
         int row = coordinate.row();
         int col = coordinate.col();
 
         return switch (direction) {
-            case UP -> new Coordinate(row - step, col);
-            case DOWN -> new Coordinate(row + step, col);
-            case LEFT -> new Coordinate(row, col - step);
-            case RIGHT -> new Coordinate(row, col + step);
+            case UP -> new Coordinate(row - 2, col);
+            case DOWN -> new Coordinate(row + 2, col);
+            case LEFT -> new Coordinate(row, col - 2);
+            case RIGHT -> new Coordinate(row, col + 2);
         };
     }
 
     public static void main(String[] args) {
         GridGenerator gridGenerator = new GridGenerator(5, 5);
-        MazeListModel mazeListModel = gridGenerator.getMazeListModel(new Coordinate(1, 1));
+        MazeListModel mazeListModel = gridGenerator.getMazeListModel(new Coordinate(0, 1));
         Cell[][] cells = mazeListModel.mazeList();
         for (Cell[] row : cells) {
             for (Cell cell : row) {
