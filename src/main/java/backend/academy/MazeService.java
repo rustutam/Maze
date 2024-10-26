@@ -13,16 +13,16 @@ import backend.academy.models.Coordinate;
 import backend.academy.models.Maze;
 import backend.academy.models.MazeListModel;
 import backend.academy.solver.Solver;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class MazeService {
-    Random random;
+    SecureRandom random;
 
-    public MazeService(Random random) {
+    public MazeService(SecureRandom random) {
         this.random = random;
     }
 

@@ -76,7 +76,7 @@ public class GridGenerator {
     }
 
     private List<Coordinate> getNeighbours(Coordinate coordinate) {
-        List<Coordinate> neighboursCoordinate = new ArrayList<>();
+        List<Coordinate> neighboursCoordinate = new ArrayList<>(Direction.values().length);
         for (Direction direction : Direction.values()) {
             Coordinate newCoordinate = move(coordinate, direction);
             neighboursCoordinate.add(newCoordinate);

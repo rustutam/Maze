@@ -3,17 +3,17 @@ package backend.academy.generator;
 import backend.academy.graph.Edge;
 import backend.academy.graph.Graph;
 import backend.academy.graph.Vertex;
+import com.google.common.collect.Sets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 public class PrimaMazeGenerator implements Generator {
 
-    private final Random random;
+    private final SecureRandom random;
 
-    public PrimaMazeGenerator(Random random) {
+    public PrimaMazeGenerator(SecureRandom random) {
         this.random = random;
     }
 
@@ -21,10 +21,10 @@ public class PrimaMazeGenerator implements Generator {
     public Graph generate(Graph graph) {
         List<Vertex> allVertex = graph.getVertices();
         Vertex startVertex = allVertex.get(random.nextInt(allVertex.size()));
-        Set<Vertex> visitedVertex = new HashSet<>();
+        Set<Vertex> visitedVertex = Sets.newHashSetWithExpectedSize(allVertex.size());
 
-        List<Edge> neighboursEdges =
-            new ArrayList<>(graph.getNeighbours(startVertex).stream().toList());
+        List<Edge> neighboursEdges = getNeighboursEdges(graph, startVertex);
+
         visitedVertex.add(startVertex);
 
         Graph minGraph = new Graph();
@@ -50,6 +50,10 @@ public class PrimaMazeGenerator implements Generator {
         }
 
         return minGraph;
+    }
+
+    private List<Edge> getNeighboursEdges(Graph graph, Vertex startVertex) {
+        return new ArrayList<>(graph.getNeighbours(startVertex).stream().toList());
     }
 }
 

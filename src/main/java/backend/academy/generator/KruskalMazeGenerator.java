@@ -3,7 +3,7 @@ package backend.academy.generator;
 import backend.academy.graph.Edge;
 import backend.academy.graph.Graph;
 import backend.academy.graph.Vertex;
-import java.util.HashMap;
+import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,16 +49,17 @@ public class KruskalMazeGenerator implements Generator {
     ) {
         int component1 = connectiveComponent.get(v1);
         int component2 = connectiveComponent.get(v2);
-        for (Vertex vertex : connectiveComponent.keySet()) {
-            if (Objects.equals(connectiveComponent.get(vertex), component2)) {
-                connectiveComponent.put(vertex, component1);
+        for (Map.Entry<Vertex, Integer> entry : connectiveComponent.entrySet()) {
+            if (Objects.equals(entry.getValue(), component2)) {
+                entry.setValue(component1);
             }
         }
     }
 
     private Map<Vertex, Integer> getConnectiveComponent(List<Vertex> allVertex) {
         int component = 0;
-        Map<Vertex, Integer> connectiveComponent = new HashMap<>();
+        Map<Vertex, Integer> connectiveComponent = Maps.newHashMapWithExpectedSize(allVertex.size());
+
         for (Vertex vertex : allVertex) {
             connectiveComponent.put(vertex, component);
             component += 1;

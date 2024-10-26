@@ -3,10 +3,10 @@ package backend.academy.solver;
 import backend.academy.graph.Edge;
 import backend.academy.graph.Graph;
 import backend.academy.graph.Vertex;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,10 +17,10 @@ public class DijkstraSolver implements Solver {
     public List<Vertex> solve(Graph graph, Vertex startVertex, Vertex endVertex) {
         List<Vertex> allVertex = graph.getVertices();
 
-        Set<Vertex> visitedVertex = new HashSet<>();
+        Set<Vertex> visitedVertex = Sets.newHashSetWithExpectedSize(allVertex.size());
 
-        Map<Vertex, Integer> distance = new HashMap<>();
-        Map<Vertex, Vertex> predecessors = new HashMap<>();
+        Map<Vertex, Integer> distance = Maps.newHashMapWithExpectedSize(allVertex.size());
+        Map<Vertex, Vertex> predecessors = Maps.newHashMapWithExpectedSize(allVertex.size());
 
         if (!allVertex.contains(startVertex)) {
             throw new IllegalArgumentException("Start vertex not in graph");

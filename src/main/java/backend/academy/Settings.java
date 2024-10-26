@@ -9,17 +9,16 @@ import backend.academy.solver.BfsSolver;
 import backend.academy.solver.DijkstraSolver;
 import backend.academy.solver.Solver;
 import java.io.PrintStream;
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 public class Settings {
-    private final Random random;
+    private final SecureRandom random;
     private final InputProvider inputProvider;
     private final PrintStream out;
     private static final String INVALID_INPUT_MESSAGE = "Некорректный ввод. Пожалуйста, введите числовое значение.";
 
-
-    public Settings(InputProvider inputProvider, PrintStream out, Random random) {
+    public Settings(InputProvider inputProvider, PrintStream out, SecureRandom random) {
 
         this.inputProvider = inputProvider;
         this.out = out;

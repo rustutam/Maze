@@ -30,7 +30,7 @@ public class ConsoleRenderer implements Renderer {
         StringBuilder sb = new StringBuilder();
 
         // Верхняя рамка
-        sb.append(WALL.repeat(width + 2)).append("\n");
+        sb.append(WALL.repeat(width + 2)).append('\n');
 
         for (int row = 0; row < height; row++) {
             sb.append(WALL);
@@ -76,10 +76,10 @@ public class ConsoleRenderer implements Renderer {
 
             }
             sb.append(WALL); // Правая рамка
-            sb.append("\n"); // Правая рамка
+            sb.append('\n'); // Правая рамка
         }
         // Нижняя рамка
-        sb.append(WALL.repeat(width + 2)).append("\n");
+        sb.append(WALL.repeat(width + 2)).append('\n');
         return sb.toString();
     }
 }
