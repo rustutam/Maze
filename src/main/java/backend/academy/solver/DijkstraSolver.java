@@ -1,11 +1,8 @@
 package backend.academy.solver;
 
-import backend.academy.Coordinate;
-import backend.academy.Maze;
 import backend.academy.graph.Edge;
 import backend.academy.graph.Graph;
 import backend.academy.graph.Vertex;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,16 +22,16 @@ public class DijkstraSolver implements Solver {
         Map<Vertex, Integer> distance = new HashMap<>();
         Map<Vertex, Vertex> predecessors = new HashMap<>();
 
-        if (!allVertex.contains(startVertex)){
+        if (!allVertex.contains(startVertex)) {
             throw new IllegalArgumentException("Start vertex not in graph");
         }
         for (Vertex vertex : allVertex) {
-            distance.put(vertex, Integer.MAX_VALUE);
+            distance.put(vertex, Integer.MIN_VALUE);
         }
         distance.put(startVertex, 0);
 
         while (visitedVertex.size() != allVertex.size()) {
-            Vertex currentVertex = getMinDistanceVertex(distance, visitedVertex);
+            Vertex currentVertex = getMaxDistanceVertex(distance, visitedVertex);
             visitedVertex.add(currentVertex);
             Set<Edge> neighbours = graph.getNeighbours(currentVertex).stream()
                 .filter(edge -> !visitedVertex.contains(edge.getSecondVertex(currentVertex)))
@@ -42,28 +39,12 @@ public class DijkstraSolver implements Solver {
             for (Edge edge : neighbours) {
                 Vertex neighbour = edge.getSecondVertex(currentVertex);
                 int newDistance = distance.get(currentVertex) + neighbour.weight();
-                if (newDistance < distance.get(neighbour)) {
+                if (newDistance > distance.get(neighbour)) {
                     distance.put(neighbour, newDistance);
                     predecessors.put(neighbour, currentVertex);
                 }
             }
         }
-
-//        Graph solveGraph = new Graph();
-//        for (Vertex vertex: path)
-//            solveGraph.addVertex(vertex);
-//
-//        for (int i = 0; i < path.size() - 1; i++) {
-//            Vertex from = path.get(i);
-//            Vertex to = path.get(i + 1);
-//            int weight = graph.getNeighbours(from).stream()
-//                .filter(edge -> edge.getSecondVertex(from).equals(to))
-//                .findFirst()
-//                .orElseThrow(() -> new IllegalArgumentException("No edge found between vertices"))
-//                .weight();
-//            solveGraph.addEdge(from, to, weight);
-//        }
-
         return reconstructPath(predecessors, endVertex);
 
     }
@@ -74,21 +55,25 @@ public class DijkstraSolver implements Solver {
             path.add(at);
         }
         Collections.reverse(path);
+        if (path.size() == 1 && !path.getFirst().equals(endVertex)) {
+            return Collections.emptyList();
+        }
         return path;
     }
 
-    Vertex getMinDistanceVertex(Map<Vertex, Integer> distance, Set<Vertex> visitedVertex) {
-        Vertex minVertex = null;
-        int minDistance = Integer.MAX_VALUE;
+    Vertex getMaxDistanceVertex(Map<Vertex, Integer> distance, Set<Vertex> visitedVertex) {
+        Vertex maxVertex = null;
+        int minDistance = Integer.MIN_VALUE;
         for (Map.Entry<Vertex, Integer> entry : distance.entrySet()) {
-            if (!visitedVertex.contains(entry.getKey()) && entry.getValue() < minDistance) {
+            if (!visitedVertex.contains(entry.getKey()) && entry.getValue() > minDistance) {
                 minDistance = entry.getValue();
-                minVertex = entry.getKey();
+                maxVertex = entry.getKey();
             }
         }
-        if (minVertex == null) {
+        if (maxVertex == null) {
             throw new IllegalArgumentException("No vertex found");
         }
-        return minVertex;
+        return maxVertex;
     }
+
 }
