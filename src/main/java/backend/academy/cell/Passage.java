@@ -15,12 +15,6 @@ public class Passage extends Cell {
         this.passageType = PassageType.NORMAL;
     }
 
-    public enum PassageType {
-        NORMAL,
-        SAND,
-        COIN
-    }
-
     public static void main(String[] args) {
         Passage cell = new Passage(1, 2);
         System.out.println(cell.type());

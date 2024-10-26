@@ -1,5 +1,6 @@
 package backend.academy.cell;
 
+import lombok.Setter;
 import lombok.ToString;
 import lombok.Getter;
 import java.util.Objects;
@@ -18,11 +19,6 @@ public abstract class Cell {
         this.col = col;
         this.type = type;
 
-    }
-
-    public enum CellType {
-        WALL,
-        PASSAGE
     }
 
     @Override
