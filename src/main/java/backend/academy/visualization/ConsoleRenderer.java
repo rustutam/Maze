@@ -57,14 +57,14 @@ public class ConsoleRenderer implements Renderer {
                     case PASSAGE:
                         Passage passage = (Passage) cell;
                         switch (passage.passageType()) {
-                            case NORMAL:
-                                sb.append(SPACE);
-                                break;
                             case SAND:
                                 sb.append(SAND);
                                 break;
                             case COIN:
                                 sb.append(COIN);
+                                break;
+                            case NORMAL:
+                                sb.append(SPACE);
                                 break;
                             default:
                                 throw new IllegalStateException(UNEXPECTED_VALUE_MESSAGE + passage.passageType());

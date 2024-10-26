@@ -1,4 +1,4 @@
-package backend.academy;
+package backend.academy.app;
 
 import backend.academy.cell.CellType;
 import backend.academy.cell.Passage;
@@ -11,6 +11,7 @@ import backend.academy.graph.Vertex;
 import backend.academy.models.ConvertedMazeModel;
 import backend.academy.models.Coordinate;
 import backend.academy.models.Maze;
+import backend.academy.models.MazeGenerationParamsModel;
 import backend.academy.models.MazeListModel;
 import backend.academy.solver.Solver;
 import java.security.SecureRandom;
@@ -26,19 +27,33 @@ public class MazeService {
         this.random = random;
     }
 
-    public Maze generateMaze(int height, int width, Generator mazeGenerator, int coinCount, int sandCount) {
+    public Maze generateMaze(MazeGenerationParamsModel mazeGenerationParamsModel) {
+
+        int height = mazeGenerationParamsModel.height();
+        int width = mazeGenerationParamsModel.width();
+        Generator mazeGenerator = mazeGenerationParamsModel.generator();
+        int coinCount = mazeGenerationParamsModel.coinCount();
+        int sandCount = mazeGenerationParamsModel.sandCount();
+        ToGraphConverter toGraphConverter = mazeGenerationParamsModel.toGraphConverter();
+        ToMazeListConverter toMazeListConverter = mazeGenerationParamsModel.toMazeListConverter();
+        GridGenerator gridGenerator = mazeGenerationParamsModel.gridGenerator();
+
         //получаем сетку
-        MazeListModel mazeListModel = getRandomGrid(height, width);
+        MazeListModel mazeListModel =
+            gridGenerator.getMazeListModel(
+                new Coordinate(random.nextInt(height), random.nextInt(width)),
+                height,
+                width);
 
         //строим из этой сетки полный граф
-        ConvertedMazeModel convertedMazeModel = new ToGraphConverter(mazeListModel).convertToGraph();
+        ConvertedMazeModel convertedMazeModel = toGraphConverter.convertToGraph(mazeListModel);
 
         //генератор возвращает остов
         Graph minGraph = mazeGenerator.generate(convertedMazeModel.graph());
         convertedMazeModel = new ConvertedMazeModel(minGraph, convertedMazeModel.coordinateVertexMap(), height, width);
 
         //преобразуем остов в лабиринт
-        MazeListModel minMazeListModel = new ToMazeListConverter(convertedMazeModel).convertToMazeList();
+        MazeListModel minMazeListModel = toMazeListConverter.convertToMazeList(convertedMazeModel);
 
         //добавляем монеты
         addNewSurfaces(minMazeListModel, PassageType.COIN, coinCount);
@@ -59,7 +74,7 @@ public class MazeService {
         MazeListModel mazeListModel = maze.mazeListModel();
 
         //преобразуем лабиринт в граф
-        ConvertedMazeModel convertedMazeModel = new ToGraphConverter(mazeListModel).convertToGraph();
+        ConvertedMazeModel convertedMazeModel = new ToGraphConverter().convertToGraph(mazeListModel);
         //получаем стартовую и конечную вершины
         Vertex startVertex = convertedMazeModel.coordinateVertexMap().get(startCoordinate);
         Vertex finishVertex = convertedMazeModel.coordinateVertexMap().get(finishCoordinate);
@@ -74,12 +89,6 @@ public class MazeService {
                 .orElseThrow(() -> new IllegalStateException("Vertex not found in coordinate map")))
             .toList();
 
-    }
-
-    private MazeListModel getRandomGrid(int height, int width) {
-        GridGenerator gridGenerator = new GridGenerator(height, width);
-        Coordinate startCoordinate = new Coordinate(random.nextInt(height), random.nextInt(width));
-        return gridGenerator.getMazeListModel(startCoordinate);
     }
 
     public void addNewSurfaces(MazeListModel mazeListModel, PassageType passageType, int count) {

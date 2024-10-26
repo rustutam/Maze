@@ -18,19 +18,14 @@ public class ToGraphConverter {
     private static final int SAND_WEIGHT = 0;
     private static final int NORMAL_WEIGHT = 1;
 
-    private final MazeListModel mazeListModel;
     private final Graph graph = new Graph();
     private final Map<Coordinate, Vertex> coordinateVertexMap = new HashMap<>();
 
-    public ToGraphConverter(MazeListModel mazeListModel) {
-        this.mazeListModel = mazeListModel;
-    }
-
-    public ConvertedMazeModel convertToGraph() {
+    public ConvertedMazeModel convertToGraph(MazeListModel mazeListModel) {
         Cell[][] mazeList = mazeListModel.mazeList();
         List<Cell> passageList = getPassageList(mazeList);
         addVertexToGraph(passageList);
-        addEdgesToGraph();
+        addEdgesToGraph(mazeListModel);
 
         return new ConvertedMazeModel(graph, coordinateVertexMap, mazeListModel.height(), mazeListModel.width());
 
@@ -62,7 +57,7 @@ public class ToGraphConverter {
         );
     }
 
-    private void addEdgesToGraph() {
+    private void addEdgesToGraph(MazeListModel mazeListModel) {
         graph.getVertices().forEach(vertex -> {
             Coordinate coordinate = getCoordinateWithVertex(vertex);
             List<Coordinate> neighbours = mazeListModel.coordinateNeighboursMap().get(coordinate);

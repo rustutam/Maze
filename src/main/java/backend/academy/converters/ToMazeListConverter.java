@@ -14,40 +14,30 @@ import java.util.List;
 import java.util.Map;
 
 public class ToMazeListConverter {
-    private final ConvertedMazeModel convertedMazeModel;
-    private final int height;
-    private final int width;
 
     private Cell[][] mazeList;
     private final Map<Coordinate, List<Coordinate>> coordinateNeighbours = new HashMap<>();
 
-    public ToMazeListConverter(ConvertedMazeModel convertedMazeModel) {
-        this.convertedMazeModel = convertedMazeModel;
-        this.height = convertedMazeModel.height();
-        this.width = convertedMazeModel.width();
-
-    }
-
-    public MazeListModel convertToMazeList() {
-        generateFullWallMaze();
-        updateMazeList();
+    public MazeListModel convertToMazeList(ConvertedMazeModel convertedMazeModel) {
+        generateFullWallMaze(convertedMazeModel.height(), convertedMazeModel.width());
+        updateMazeList(convertedMazeModel);
 
         return new MazeListModel(mazeList, coordinateNeighbours, convertedMazeModel.height(),
             convertedMazeModel.width());
     }
 
-    private void updateMazeList() {
+    private void updateMazeList(ConvertedMazeModel convertedMazeModel) {
         Graph graph = convertedMazeModel.graph();
         List<Vertex> vertices = graph.getVertices();
         for (Vertex vertex : vertices) {
             List<Vertex> neighboursVertexList =
                 graph.getNeighbours(vertex).stream().map(edge -> edge.getSecondVertex(vertex)).toList();
-            Coordinate coordinate = getCoordinateByVertex(vertex);
+            Coordinate coordinate = getCoordinateByVertex(vertex, convertedMazeModel);
             int row = coordinate.row();
             int col = coordinate.col();
             mazeList[row][col] = new Passage(row, col);
             for (Vertex neighbour : neighboursVertexList) {
-                Coordinate neighbourCoordinate = getCoordinateByVertex(neighbour);
+                Coordinate neighbourCoordinate = getCoordinateByVertex(neighbour, convertedMazeModel);
                 int neighbourRow = neighbourCoordinate.row();
                 int neighbourCol = neighbourCoordinate.col();
                 mazeList[neighbourRow][neighbourCol] = new Passage(neighbourRow, neighbourCol);
@@ -77,7 +67,7 @@ public class ToMazeListConverter {
         }
     }
 
-    private void generateFullWallMaze() {
+    private void generateFullWallMaze(int height, int width) {
         mazeList = new Cell[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -90,7 +80,7 @@ public class ToMazeListConverter {
         coordinateNeighbours.computeIfAbsent(key, ignored -> new ArrayList<>()).add(value);
     }
 
-    private Coordinate getCoordinateByVertex(Vertex vertex) {
+    private Coordinate getCoordinateByVertex(Vertex vertex, ConvertedMazeModel convertedMazeModel) {
         return convertedMazeModel.coordinateVertexMap().entrySet().stream()
             .filter(entry -> entry.getValue().equals(vertex))
             .map(Map.Entry::getKey)

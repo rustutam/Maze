@@ -1,4 +1,4 @@
-package backend.academy;
+package backend.academy.app;
 
 import backend.academy.generator.Generator;
 import backend.academy.generator.KruskalMazeGenerator;
@@ -26,7 +26,7 @@ public class Settings {
 
     }
 
-    public Integer getMazeDimension(String prompt, String errorMessage) {
+    private Integer getMazeDimension(String prompt, String errorMessage) {
         while (true) {
             try {
                 String input = inputProvider.getInput(prompt);
@@ -88,7 +88,7 @@ public class Settings {
         }
     }
 
-    public Coordinate getCoordinate(String prompt, List<Coordinate> allowedCoordinates) {
+    private Coordinate getCoordinate(String prompt, List<Coordinate> allowedCoordinates) {
         while (true) {
             try {
                 String input = inputProvider.getInput(prompt);
@@ -119,7 +119,7 @@ public class Settings {
         return getCoordinate("Введите координаты конечной точки (x,y):", allowedCoordinates);
     }
 
-    public int getCount(String prompt) {
+    private int getCount(String prompt) {
         while (true) {
             try {
                 String input = inputProvider.getInput(prompt);
