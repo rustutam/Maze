@@ -29,7 +29,7 @@ public class KruskalMazeGenerator implements Generator {
             Vertex v2 = edge.to();
             if (!Objects.equals(connectiveComponent.get(v1), connectiveComponent.get(v2))) {
 
-                connectiveComponent = mergeConnectiveComponent(connectiveComponent, v1, v2);
+                mergeConnectiveComponent(connectiveComponent, v1, v2);
                 minGraph.addVertex(v1);
                 minGraph.addVertex(v2);
                 minGraph.addEdge(v1, v2);
@@ -42,7 +42,7 @@ public class KruskalMazeGenerator implements Generator {
         return minGraph;
     }
 
-    private Map<Vertex, Integer> mergeConnectiveComponent(
+    private void mergeConnectiveComponent(
         Map<Vertex, Integer> connectiveComponent,
         Vertex v1,
         Vertex v2
@@ -54,7 +54,6 @@ public class KruskalMazeGenerator implements Generator {
                 connectiveComponent.put(vertex, component1);
             }
         }
-        return connectiveComponent;
     }
 
     private Map<Vertex, Integer> getConnectiveComponent(List<Vertex> allVertex) {
@@ -65,8 +64,5 @@ public class KruskalMazeGenerator implements Generator {
             component += 1;
         }
         return connectiveComponent;
-    }
-
-    public static void main(String[] args) {
     }
 }

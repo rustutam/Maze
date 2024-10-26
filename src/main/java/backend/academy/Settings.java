@@ -4,6 +4,7 @@ import backend.academy.generator.Generator;
 import backend.academy.generator.KruskalMazeGenerator;
 import backend.academy.generator.PrimaMazeGenerator;
 import backend.academy.input.InputProvider;
+import backend.academy.models.Coordinate;
 import backend.academy.solver.BfsSolver;
 import backend.academy.solver.DijkstraSolver;
 import backend.academy.solver.Solver;
@@ -12,9 +13,11 @@ import java.util.List;
 import java.util.Random;
 
 public class Settings {
-    private Random random;
-    private InputProvider inputProvider;
+    private final Random random;
+    private final InputProvider inputProvider;
     private final PrintStream out;
+    private static final String INVALID_INPUT_MESSAGE = "Некорректный ввод. Пожалуйста, введите числовое значение.";
+
 
     public Settings(InputProvider inputProvider, PrintStream out, Random random) {
 
@@ -24,124 +27,121 @@ public class Settings {
 
     }
 
-    public Integer getMazeHeight() {
+    public Integer getMazeDimension(String prompt, String errorMessage) {
         while (true) {
             try {
-                String input = inputProvider.getInput("Введите желаемую высоту лабиринта:");
-                int height = Integer.parseInt(input);
-                if (height > 0) {
-                    return height;
+                String input = inputProvider.getInput(prompt);
+                int dimension = Integer.parseInt(input);
+                if (dimension > 0) {
+                    return dimension;
                 } else {
-                    out.println("Высота должна быть положительным числом. Попробуйте снова.");
+                    out.println(errorMessage);
                 }
             } catch (NumberFormatException e) {
-                out.println("Некорректный ввод. Пожалуйста, введите числовое значение.");
+                out.println(INVALID_INPUT_MESSAGE);
             }
         }
+    }
+
+    public Integer getMazeHeight() {
+        return getMazeDimension("Введите желаемую высоту лабиринта:",
+            "Высота должна быть положительным числом. Попробуйте снова.");
     }
 
     public Integer getMazeWeight() {
-        while (true) {
-            try {
-                String input = inputProvider.getInput("Введите желаемую ширину лабиринта:");
-                int weight = Integer.parseInt(input);
-                if (weight > 0) {
-                    return weight;
-                } else {
-                    out.println("Ширина должна быть положительным числом. Попробуйте снова.");
-                }
-            } catch (NumberFormatException e) {
-                out.println("Некорректный ввод. Пожалуйста, введите числовое значение.");
-            }
-        }
+        return getMazeDimension("Введите желаемую ширину лабиринта:",
+            "Ширина должна быть положительным числом. Попробуйте снова.");
     }
 
     public Generator getGenerateAlgorithm() {
+        return getAlgorithm(
+            "Выберите алгоритм генерации лабиринта:",
+            List.of("1 - Прима", "2 - Краскала"),
+            List.of(new PrimaMazeGenerator(random), new KruskalMazeGenerator(random))
+        );
+    }
+
+    public Solver getSolverAlgorithm() {
+        return getAlgorithm(
+            "Выберите алгоритм решения лабиринта:",
+            List.of("1 - Дейкстра", "2 - BFS"),
+            List.of(new DijkstraSolver(), new BfsSolver())
+        );
+    }
+
+    private <T> T getAlgorithm(String prompt, List<String> options, List<T> algorithms) {
         while (true) {
             try {
-                out.println("Выберите алгоритм генерации лабиринта:");
-                out.println("1 - Прима");
-                out.println("2 - Краскала");
+                out.println(prompt);
+                for (String option : options) {
+                    out.println(option);
+                }
                 String input = inputProvider.getInput("Введите номер алгоритма:");
                 int algorithm = Integer.parseInt(input);
-                if (algorithm == 1) {
-                    return new PrimaMazeGenerator(random);
-                } else if (algorithm == 2) {
-                    return new KruskalMazeGenerator(random);
+                if (algorithm > 0 && algorithm <= algorithms.size()) {
+                    return algorithms.get(algorithm - 1);
                 } else {
-                    out.println("Некорректный выбор. Пожалуйста, выберите 1 или 2.");
+                    out.println("Некорректный выбор. Пожалуйста, выберите правильный номер.");
                 }
             } catch (NumberFormatException e) {
-                out.println("Некорректный ввод. Пожалуйста, введите числовое значение.");
+                out.println(INVALID_INPUT_MESSAGE);
             }
         }
     }
 
-    public Solver getSolverAlgorithm() {
+    public Coordinate getCoordinate(String prompt, List<Coordinate> allowedCoordinates) {
         while (true) {
             try {
-                out.println("Выберите алгоритм решения лабиринта:");
-                out.println("1 - Дейкстра");
-                out.println("2 - BFS");
-                String input = inputProvider.getInput("Введите номер алгоритма:");
-                int algorithm = Integer.parseInt(input);
-                if (algorithm == 1) {
-                    return new DijkstraSolver();
-                } else if (algorithm == 2) {
-                    return new BfsSolver();
+                String input = inputProvider.getInput(prompt);
+                String[] parts = input.split(",");
+                if (parts.length != 2) {
+                    out.println("Некорректный ввод. Пожалуйста, введите координаты в формате x,y.");
+                    continue;
+                }
+                int x = Integer.parseInt(parts[0].trim());
+                int y = Integer.parseInt(parts[1].trim());
+                Coordinate coordinate = new Coordinate(x, y);
+                if (allowedCoordinates.contains(coordinate)) {
+                    return coordinate;
                 } else {
-                    out.println("Некорректный выбор. Пожалуйста, выберите 1 или 2.");
+                    out.println("Вы вводите координату стены или координату,которая находится вне лабиринта.");
                 }
             } catch (NumberFormatException e) {
-                out.println("Некорректный ввод. Пожалуйста, введите числовое значение.");
+                out.println("Некорректный ввод. Пожалуйста, введите числ��вые значения для координат.");
             }
         }
     }
 
     public Coordinate getStartCoordinate(List<Coordinate> allowedCoordinates) {
+        return getCoordinate("Введите координаты начальной точки x,y:", allowedCoordinates);
+    }
+
+    public Coordinate getFinishCoordinate(List<Coordinate> allowedCoordinates) {
+        return getCoordinate("Введите координаты конечной точки (x,y):", allowedCoordinates);
+    }
+
+    public int getCount(String prompt) {
         while (true) {
             try {
-                String input = inputProvider.getInput("Введите координаты начальной точки x, y:");
-                String[] parts = input.split(",");
-                if (parts.length != 2) {
-                    out.println("Некорректный ввод. Пожалуйста, введите координаты в формате x,y.");
-                    continue;
-                }
-                int x = Integer.parseInt(parts[0].trim());
-                int y = Integer.parseInt(parts[1].trim());
-                Coordinate startCoordinate = new Coordinate(x, y);
-                if (allowedCoordinates.contains(startCoordinate)) {
-                    return startCoordinate;
+                String input = inputProvider.getInput(prompt);
+                int count = Integer.parseInt(input);
+                if (count >= 0) {
+                    return count;
                 } else {
-                    out.println("Вы вводите координату стены или координату,которая находится вне лабиринта.");
+                    out.println("Количество должно быть положительным числом или 0. Попробуйте снова.");
                 }
             } catch (NumberFormatException e) {
-                out.println("Некорректный ввод. Пожалуйста, введите числовые значения для координат.");
+                out.println(INVALID_INPUT_MESSAGE);
             }
         }
     }
 
-    public Coordinate getFinishCoordinate(List<Coordinate> allowedCoordinates) {
-        while (true) {
-            try {
-                String input = inputProvider.getInput("Введите координаты конечной точки (x, y):");
-                String[] parts = input.split(",");
-                if (parts.length != 2) {
-                    out.println("Некорректный ввод. Пожалуйста, введите координаты в формате x,y.");
-                    continue;
-                }
-                int x = Integer.parseInt(parts[0].trim());
-                int y = Integer.parseInt(parts[1].trim());
-                Coordinate finishCoordinate = new Coordinate(x, y);
-                if (allowedCoordinates.contains(finishCoordinate)) {
-                    return finishCoordinate;
-                } else {
-                    out.println("Вы вводите координату стены или координату,которая находится вне лабиринта.");
-                }
-            } catch (NumberFormatException e) {
-                out.println("Некорректный ввод. Пожалуйста, введите числовые значения для координат.");
-            }
-        }
+    public int getCoinCount() {
+        return getCount("Введите количество монет в лабиринте: ");
+    }
+
+    public int getSandCount() {
+        return getCount("Введите количество песка в лабиринте: ");
     }
 
 }

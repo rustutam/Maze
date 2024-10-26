@@ -51,12 +51,6 @@ public class PrimaMazeGenerator implements Generator {
 
         return minGraph;
     }
-
-    public static void main(String[] args) {
-//        PrimaMazeGenerator primaMazeGenerator = new PrimaMazeGenerator(new Random());
-//        Maze maze = primaMazeGenerator.generate(5, 5);
-//        maze.graph().printGraph();
-    }
 }
 
 

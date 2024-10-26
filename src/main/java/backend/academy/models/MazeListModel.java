@@ -1,6 +1,5 @@
 package backend.academy.models;
 
-import backend.academy.Coordinate;
 import backend.academy.cell.Cell;
 import java.util.List;
 import java.util.Map;

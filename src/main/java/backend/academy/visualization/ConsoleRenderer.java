@@ -1,9 +1,9 @@
 package backend.academy.visualization;
 
-import backend.academy.Coordinate;
-import backend.academy.Maze;
 import backend.academy.cell.Cell;
 import backend.academy.cell.Passage;
+import backend.academy.models.Coordinate;
+import backend.academy.models.Maze;
 import java.util.List;
 
 public class ConsoleRenderer implements Renderer {
@@ -14,6 +14,7 @@ public class ConsoleRenderer implements Renderer {
     private static final String PATH = "🟨";
     private static final String COIN = "🪙";
     private static final String SAND = "🏖️";
+    private static final String UNEXPECTED_VALUE_MESSAGE = "Unexpected value: ";
 
     @Override
     public String render(Maze maze) {
@@ -65,8 +66,12 @@ public class ConsoleRenderer implements Renderer {
                             case COIN:
                                 sb.append(COIN);
                                 break;
+                            default:
+                                throw new IllegalStateException(UNEXPECTED_VALUE_MESSAGE + passage.passageType());
                         }
                         break;
+                    default:
+                        throw new IllegalStateException(UNEXPECTED_VALUE_MESSAGE + cell.type());
                 }
 
             }

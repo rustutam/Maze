@@ -15,9 +15,4 @@ public class Passage extends Cell {
         this.passageType = PassageType.NORMAL;
     }
 
-    public static void main(String[] args) {
-        Passage cell = new Passage(1, 2);
-        System.out.println(cell.type());
-        System.out.println(cell.passageType());
-    }
 }

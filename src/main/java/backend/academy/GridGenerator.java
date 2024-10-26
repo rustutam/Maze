@@ -3,6 +3,8 @@ package backend.academy;
 import backend.academy.cell.Cell;
 import backend.academy.cell.Passage;
 import backend.academy.cell.Wall;
+import backend.academy.models.Coordinate;
+import backend.academy.models.Direction;
 import backend.academy.models.MazeListModel;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,19 +91,20 @@ public class GridGenerator {
     }
 
     private boolean isWithinBounds(Coordinate coordinate) {
-        return coordinate.row() >= 0 && coordinate.row() < height &&
-            coordinate.col() >= 0 && coordinate.col() < width;
+        return coordinate.row() >= 0 && coordinate.row() < height
+            && coordinate.col() >= 0 && coordinate.col() < width;
     }
 
     private void addCoordinateNeighbour(Coordinate c1, Coordinate c2) {
-        coordinateNeighbours.computeIfAbsent(c1, _ -> new ArrayList<>()).add(c2);
+        coordinateNeighbours.computeIfAbsent(c1, ignored -> new ArrayList<>()).add(c2);
     }
 
     private int adjustCoordinate(int coordinate) {
-        while (coordinate >= 2) {
-            coordinate -= 2;
+        int adjustedCoordinate = coordinate;
+        while (adjustedCoordinate >= 2) {
+            adjustedCoordinate -= 2;
         }
-        return coordinate;
+        return adjustedCoordinate;
     }
 
     private Coordinate move(Coordinate coordinate, Direction direction) {
@@ -115,27 +118,4 @@ public class GridGenerator {
             case RIGHT -> new Coordinate(row, col + 2);
         };
     }
-
-    public static void main(String[] args) {
-        GridGenerator gridGenerator = new GridGenerator(5, 5);
-        MazeListModel mazeListModel = gridGenerator.getMazeListModel(new Coordinate(0, 1));
-        Cell[][] cells = mazeListModel.mazeList();
-        for (Cell[] row : cells) {
-            for (Cell cell : row) {
-                System.out.print(cell + " ");
-                System.out.println();
-
-            }
-            System.out.println("-------------------------------------------------------------");
-        }
-
-        Map<Coordinate, List<Coordinate>> cordList = mazeListModel.coordinateNeighboursMap();
-        cordList.forEach((k, v) -> {
-            System.out.println(k);
-            v.forEach(c -> System.out.print(c + " "));
-            System.out.println();
-            System.out.println("-----------------------------------------");
-        });
-    }
-
 }

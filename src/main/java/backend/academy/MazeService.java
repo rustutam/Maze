@@ -1,6 +1,5 @@
 package backend.academy;
 
-import backend.academy.cell.Cell;
 import backend.academy.cell.CellType;
 import backend.academy.cell.Passage;
 import backend.academy.cell.PassageType;
@@ -14,7 +13,6 @@ import backend.academy.models.Coordinate;
 import backend.academy.models.Maze;
 import backend.academy.models.MazeListModel;
 import backend.academy.solver.Solver;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +29,6 @@ public class MazeService {
     public Maze generateMaze(int height, int width, Generator mazeGenerator, int coinCount, int sandCount) {
         //получаем сетку
         MazeListModel mazeListModel = getRandomGrid(height, width);
-
-
 
         //строим из этой сетки полный граф
         ConvertedMazeModel convertedMazeModel = new ToGraphConverter(mazeListModel).convertToGraph();
@@ -62,8 +58,6 @@ public class MazeService {
         //получаем лабиринт
         MazeListModel mazeListModel = maze.mazeListModel();
 
-
-
         //преобразуем лабиринт в граф
         ConvertedMazeModel convertedMazeModel = new ToGraphConverter(mazeListModel).convertToGraph();
         //получаем стартовую и конечную вершины
@@ -88,29 +82,23 @@ public class MazeService {
         return gridGenerator.getMazeListModel(startCoordinate);
     }
 
-    public List<Coordinate> getAllPassage(Maze maze) {
-        MazeListModel mazeListModel = maze.mazeListModel();
-        return mazeListModel.coordinateNeighboursMap().keySet().stream().toList();
-    }
-
     public void addNewSurfaces(MazeListModel mazeListModel, PassageType passageType, int count) {
-        List<Coordinate> allNormalTypePassages = Arrays.stream(mazeListModel.mazeList()).map(Arrays::asList).flatMap(List::stream)
-            .filter(cell -> cell.type() == CellType.PASSAGE)
-            .filter(cell -> ((Passage) cell).passageType() == PassageType.NORMAL)
-            .map(cell -> new Coordinate(cell.row(), cell.col()))
-            .collect(Collectors.toList());
+        List<Coordinate> allNormalTypePassages =
+            Arrays.stream(mazeListModel.mazeList()).map(Arrays::asList).flatMap(List::stream)
+                .filter(cell -> cell.type() == CellType.PASSAGE)
+                .filter(cell -> ((Passage) cell).passageType() == PassageType.NORMAL)
+                .map(cell -> new Coordinate(cell.row(), cell.col()))
+                .collect(Collectors.toList());
         int passageCount = allNormalTypePassages.size();
-        if (count > passageCount){
-            count = passageCount;
-        }
-        while (count > 0) {
+        int remainingCount = Math.min(count, passageCount);
+        while (remainingCount > 0) {
             int index = random.nextInt(passageCount);
             Coordinate coordinate = allNormalTypePassages.get(index);
             Passage passage = (Passage) mazeListModel.mazeList()[coordinate.row()][coordinate.col()];
             passage.passageType(passageType);
             allNormalTypePassages.remove(index);
-            count -=1;
-            passageCount -=1;
+            remainingCount -= 1;
+            passageCount -= 1;
 
         }
 

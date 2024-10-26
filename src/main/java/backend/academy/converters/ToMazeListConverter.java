@@ -1,4 +1,4 @@
-package backend.academy;
+package backend.academy.converters;
 
 import backend.academy.cell.Cell;
 import backend.academy.cell.Passage;
@@ -6,9 +6,9 @@ import backend.academy.cell.Wall;
 import backend.academy.graph.Graph;
 import backend.academy.graph.Vertex;
 import backend.academy.models.ConvertedMazeModel;
+import backend.academy.models.Coordinate;
 import backend.academy.models.MazeListModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,14 +63,14 @@ public class ToMazeListConverter {
 
         if (rowDiff != 0) {
             int rowStep = rowDiff / Math.abs(rowDiff);
-            for (int row = start.row() + rowStep; row != end.row()+rowStep; row += rowStep) {
+            for (int row = start.row() + rowStep; row != end.row() + rowStep; row += rowStep) {
 
                 mazeList[row][start.col()] = new Passage(row, start.col());
                 addCoordinateNeighbour(new Coordinate(row - rowStep, start.col()), new Coordinate(row, start.col()));
             }
         } else if (colDiff != 0) {
             int colStep = colDiff / Math.abs(colDiff);
-            for (int col = start.col() + colStep; col != end.col()+colStep; col += colStep) {
+            for (int col = start.col() + colStep; col != end.col() + colStep; col += colStep) {
                 mazeList[start.row()][col] = new Passage(start.row(), col);
                 addCoordinateNeighbour(new Coordinate(start.row(), col - colStep), new Coordinate(start.row(), col));
             }
@@ -87,7 +87,7 @@ public class ToMazeListConverter {
     }
 
     private void addCoordinateNeighbour(Coordinate key, Coordinate value) {
-        coordinateNeighbours.computeIfAbsent(key, _ -> new ArrayList<>()).add(value);
+        coordinateNeighbours.computeIfAbsent(key, ignored -> new ArrayList<>()).add(value);
     }
 
     private Coordinate getCoordinateByVertex(Vertex vertex) {
@@ -97,7 +97,5 @@ public class ToMazeListConverter {
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Vertex not found in the map"));
     }
-
-
 
 }
