@@ -1,17 +1,18 @@
-package backend.academy;
+package backend.academy.app;
 
 import backend.academy.cell.Cell;
 import backend.academy.cell.Passage;
 import backend.academy.cell.Wall;
+import backend.academy.models.Coordinate;
 import backend.academy.models.MazeListModel;
-import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GridGeneratorTest {
 
@@ -20,7 +21,7 @@ class GridGeneratorTest {
         //Arrange
         int height = 5;
         int width = 5;
-        GridGenerator gridGenerator = new GridGenerator(height, width);
+        GridGenerator gridGenerator = new GridGenerator();
         Coordinate startCoordinate = new Coordinate(0, 0);
         Cell[][] mazeList = new Cell[height][width];
         for (int i = 0; i < height; i += 1) {
@@ -36,21 +37,26 @@ class GridGeneratorTest {
 
         Map<Coordinate, List<Coordinate>> coordinateNeighbours = new HashMap<>();
         coordinateNeighbours.put(new Coordinate(0, 0), List.of(new Coordinate(0, 2), new Coordinate(2, 0)));
-        coordinateNeighbours.put(new Coordinate(0, 2), List.of(new Coordinate(0, 0), new Coordinate(0, 4), new Coordinate(2, 2)));
+        coordinateNeighbours.put(new Coordinate(0, 2),
+            List.of(new Coordinate(0, 0), new Coordinate(0, 4), new Coordinate(2, 2)));
         coordinateNeighbours.put(new Coordinate(0, 4), List.of(new Coordinate(0, 2), new Coordinate(2, 4)));
 
-        coordinateNeighbours.put(new Coordinate(2, 0), List.of(new Coordinate(0, 0), new Coordinate(4, 0), new Coordinate(2, 2)));
-        coordinateNeighbours.put(new Coordinate(2, 2), List.of(new Coordinate(2, 0), new Coordinate(2, 4), new Coordinate(4, 2), new Coordinate(0, 2)));
-        coordinateNeighbours.put(new Coordinate(2, 4), List.of(new Coordinate(0, 4), new Coordinate(4, 4), new Coordinate(2, 2)));
+        coordinateNeighbours.put(new Coordinate(2, 0),
+            List.of(new Coordinate(0, 0), new Coordinate(4, 0), new Coordinate(2, 2)));
+        coordinateNeighbours.put(new Coordinate(2, 2),
+            List.of(new Coordinate(2, 0), new Coordinate(2, 4), new Coordinate(4, 2), new Coordinate(0, 2)));
+        coordinateNeighbours.put(new Coordinate(2, 4),
+            List.of(new Coordinate(0, 4), new Coordinate(4, 4), new Coordinate(2, 2)));
 
         coordinateNeighbours.put(new Coordinate(4, 0), List.of(new Coordinate(2, 0), new Coordinate(4, 2)));
-        coordinateNeighbours.put(new Coordinate(4, 2), List.of(new Coordinate(4, 0), new Coordinate(4, 4), new Coordinate(2, 2)));
+        coordinateNeighbours.put(new Coordinate(4, 2),
+            List.of(new Coordinate(4, 0), new Coordinate(4, 4), new Coordinate(2, 2)));
         coordinateNeighbours.put(new Coordinate(4, 4), List.of(new Coordinate(4, 2), new Coordinate(2, 4)));
 
         MazeListModel myMazeListModel = new MazeListModel(mazeList, coordinateNeighbours, height, width);
 
         //Act
-        MazeListModel mazeListModelGenerated = gridGenerator.getMazeListModel(startCoordinate);
+        MazeListModel mazeListModelGenerated = gridGenerator.getMazeListModel(startCoordinate, height, width);
 
         //Assert
         assertArrayEquals(myMazeListModel.mazeList(), mazeListModelGenerated.mazeList());
@@ -68,12 +74,13 @@ class GridGeneratorTest {
         assertEquals(myMazeListModel.width(), mazeListModelGenerated.width());
 
     }
+
     @Test
     void testGetMazeListModelWithSecondStartCoordinate() {
         //Arrange
         int height = 5;
         int width = 5;
-        GridGenerator gridGenerator = new GridGenerator(height, width);
+        GridGenerator gridGenerator = new GridGenerator();
         Coordinate startCoordinate = new Coordinate(1, 1);
         Cell[][] mazeList = new Cell[height][width];
         for (int i = 0; i < height; i += 1) {
@@ -97,30 +104,31 @@ class GridGeneratorTest {
         mazeList[4][1] = new Passage(4, 1);
         mazeList[4][3] = new Passage(4, 3);
 
-
         Map<Coordinate, List<Coordinate>> coordinateNeighbours = new HashMap<>();
-        coordinateNeighbours.put(new Coordinate(0, 1), List.of(new Coordinate(1, 1), new Coordinate(0, 3)));
-        coordinateNeighbours.put(new Coordinate(0, 3), List.of(new Coordinate(0, 1), new Coordinate(1, 3)));
+        coordinateNeighbours.put(new Coordinate(0, 1), List.of(new Coordinate(1, 1)));
+        coordinateNeighbours.put(new Coordinate(0, 3), List.of(new Coordinate(1, 3)));
 
-        coordinateNeighbours.put(new Coordinate(1, 0), List.of(new Coordinate(1, 1), new Coordinate(3, 0)));
-        coordinateNeighbours.put(new Coordinate(1, 1), List.of(new Coordinate(1, 0),new Coordinate(0, 1), new Coordinate(1, 3),new Coordinate(3, 1)));
-        coordinateNeighbours.put(new Coordinate(1, 3), List.of(new Coordinate(1, 1), new Coordinate(0, 3), new Coordinate(3, 3), new Coordinate(1, 4)));
-        coordinateNeighbours.put(new Coordinate(1, 4), List.of(new Coordinate(1, 3), new Coordinate(3, 4)));
+        coordinateNeighbours.put(new Coordinate(1, 0), List.of(new Coordinate(1, 1)));
+        coordinateNeighbours.put(new Coordinate(1, 1),
+            List.of(new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(1, 3), new Coordinate(3, 1)));
+        coordinateNeighbours.put(new Coordinate(1, 3),
+            List.of(new Coordinate(1, 1), new Coordinate(0, 3), new Coordinate(3, 3), new Coordinate(1, 4)));
+        coordinateNeighbours.put(new Coordinate(1, 4), List.of(new Coordinate(1, 3)));
 
-        coordinateNeighbours.put(new Coordinate(3, 0), List.of(new Coordinate(1, 0), new Coordinate(3, 1)));
-        coordinateNeighbours.put(new Coordinate(3, 1), List.of(new Coordinate(3, 0), new Coordinate(1, 1), new Coordinate(3, 3), new Coordinate(4, 1)));
-        coordinateNeighbours.put(new Coordinate(3, 3), List.of(new Coordinate(3, 1), new Coordinate(1, 3), new Coordinate(3, 4), new Coordinate(4, 3)));
-        coordinateNeighbours.put(new Coordinate(3, 4), List.of(new Coordinate(3, 3), new Coordinate(1, 4)));
+        coordinateNeighbours.put(new Coordinate(3, 0), List.of(new Coordinate(3, 1)));
+        coordinateNeighbours.put(new Coordinate(3, 1),
+            List.of(new Coordinate(3, 0), new Coordinate(1, 1), new Coordinate(3, 3), new Coordinate(4, 1)));
+        coordinateNeighbours.put(new Coordinate(3, 3),
+            List.of(new Coordinate(3, 1), new Coordinate(1, 3), new Coordinate(3, 4), new Coordinate(4, 3)));
+        coordinateNeighbours.put(new Coordinate(3, 4), List.of(new Coordinate(3, 3)));
 
-        coordinateNeighbours.put(new Coordinate(4, 1), List.of(new Coordinate(3, 1), new Coordinate(4, 3)));
-        coordinateNeighbours.put(new Coordinate(4, 3), List.of(new Coordinate(4, 1), new Coordinate(3, 3)));
-
-
+        coordinateNeighbours.put(new Coordinate(4, 1), List.of(new Coordinate(3, 1)));
+        coordinateNeighbours.put(new Coordinate(4, 3), List.of(new Coordinate(3, 3)));
 
         MazeListModel myMazeListModel = new MazeListModel(mazeList, coordinateNeighbours, height, width);
 
         //Act
-        MazeListModel mazeListModelGenerated = gridGenerator.getMazeListModel(startCoordinate);
+        MazeListModel mazeListModelGenerated = gridGenerator.getMazeListModel(startCoordinate, height, width);
 
         //Assert
         assertArrayEquals(myMazeListModel.mazeList(), mazeListModelGenerated.mazeList());
