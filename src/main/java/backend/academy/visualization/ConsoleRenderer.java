@@ -7,6 +7,7 @@ import backend.academy.models.Maze;
 import java.util.List;
 
 public class ConsoleRenderer implements Renderer {
+    // Символы для визуализации различных элементов лабиринта
     private static final String WALL = "⬜️";
     private static final String SPACE = "⬛️";
     private static final String START = "🟩";
@@ -16,11 +17,24 @@ public class ConsoleRenderer implements Renderer {
     private static final String SAND = "🏖️";
     private static final String UNEXPECTED_VALUE_MESSAGE = "Unexpected value: ";
 
+    /**
+     * Рендерит лабиринт без пути.
+     *
+     * @param maze лабиринт для рендеринга
+     * @return строковое представление лабиринта
+     */
     @Override
     public String render(Maze maze) {
         return render(maze, List.of());
     }
 
+    /**
+     * Рендерит лабиринт с указанным путём.
+     *
+     * @param maze лабиринт для рендеринга
+     * @param path путь, который нужно отобразить
+     * @return строковое представление лабиринта с путём
+     */
     @Override
     public String render(Maze maze, List<Coordinate> path) {
         int height = maze.height();
@@ -33,12 +47,12 @@ public class ConsoleRenderer implements Renderer {
         sb.append(WALL.repeat(width + 2)).append('\n');
 
         for (int row = 0; row < height; row++) {
-            sb.append(WALL);
+            sb.append(WALL); // Левая рамка
             for (int col = 0; col < width; col++) {
                 Cell cell = mazeList[row][col];
                 Coordinate coordinate = new Coordinate(row, col);
                 if (path.contains(coordinate)) {
-
+                    // Отображаем стартовую, конечную и промежуточные точки пути
                     if (coordinate.equals(path.getFirst())) {
                         sb.append(START);
                         continue;
@@ -50,12 +64,14 @@ public class ConsoleRenderer implements Renderer {
                         continue;
                     }
                 }
+                // Отображаем тип ячейки
                 switch (cell.type()) {
                     case WALL:
                         sb.append(WALL);
                         break;
                     case PASSAGE:
                         Passage passage = (Passage) cell;
+                        // Отображаем проходы
                         switch (passage.passageType()) {
                             case SAND:
                                 sb.append(SAND);
@@ -76,7 +92,7 @@ public class ConsoleRenderer implements Renderer {
 
             }
             sb.append(WALL); // Правая рамка
-            sb.append('\n'); // Правая рамка
+            sb.append('\n');
         }
         // Нижняя рамка
         sb.append(WALL.repeat(width + 2)).append('\n');

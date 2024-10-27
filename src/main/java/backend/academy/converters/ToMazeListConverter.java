@@ -19,6 +19,7 @@ public class ToMazeListConverter {
     private final Map<Coordinate, List<Coordinate>> coordinateNeighbours = new HashMap<>();
 
     public MazeListModel convertToMazeList(ConvertedMazeModel convertedMazeModel) {
+        // Преобразуем модель графа в модель лабиринта
         generateFullWallMaze(convertedMazeModel.height(), convertedMazeModel.width());
         updateMazeList(convertedMazeModel);
 
@@ -27,6 +28,7 @@ public class ToMazeListConverter {
     }
 
     private void updateMazeList(ConvertedMazeModel convertedMazeModel) {
+        // Обновляем лабиринт на основе модели графа
         Graph graph = convertedMazeModel.graph();
         List<Vertex> vertices = graph.getVertices();
         for (Vertex vertex : vertices) {
@@ -48,19 +50,26 @@ public class ToMazeListConverter {
     }
 
     private void createIntermediatePassages(Coordinate start, Coordinate end) {
+        /*
+        При преобразовании графа в лабиринт могут возникнуть ситуации,
+        что граф соединяет 2 вершины, которые в лабиринте находятся не на соседних ячейках.
+        Поэтому при конвертировании в лабиринт нужно добавлять новые проходы.
+        Соединяем координату, соответствующей 1 вершины с координатой, соответствующей 2 вершине
+        */
         int rowDiff = end.row() - start.row();
         int colDiff = end.col() - start.col();
 
         if (rowDiff != 0) {
             int rowStep = rowDiff / Math.abs(rowDiff);
             for (int row = start.row() + rowStep; row != end.row() + rowStep; row += rowStep) {
-
+                // Устанавливаем проход в лабиринте и добавляем соседние координаты
                 mazeList[row][start.col()] = new Passage(row, start.col());
                 addCoordinateNeighbour(new Coordinate(row - rowStep, start.col()), new Coordinate(row, start.col()));
             }
         } else if (colDiff != 0) {
             int colStep = colDiff / Math.abs(colDiff);
             for (int col = start.col() + colStep; col != end.col() + colStep; col += colStep) {
+                // Устанавливаем проход в лабиринте и добавляем соседние координаты
                 mazeList[start.row()][col] = new Passage(start.row(), col);
                 addCoordinateNeighbour(new Coordinate(start.row(), col - colStep), new Coordinate(start.row(), col));
             }

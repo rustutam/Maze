@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public record Edge(Vertex from, Vertex to) {
 
+    // получить вторую вершину ребра
     public Vertex getSecondVertex(Vertex vertex) {
         if (vertex.equals(from)) {
             return to;

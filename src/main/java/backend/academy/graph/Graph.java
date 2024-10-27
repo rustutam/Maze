@@ -15,6 +15,8 @@ public class Graph {
         this.adjacencyList = new HashMap<>();
     }
 
+    // Получить все рёбра графа
+
     public List<Edge> getEdges() {
         return adjacencyList.values().stream()
             .flatMap(HashSet::stream)
@@ -22,15 +24,21 @@ public class Graph {
             .collect(Collectors.toList());
     }
 
+    // Получить все вершины графа
+
     public List<Vertex> getVertices() {
         return adjacencyList.keySet().stream()
             .distinct()
             .collect(Collectors.toList());
     }
 
+    // Добавить вершину в граф
+
     public void addVertex(Vertex vertex) {
         adjacencyList.putIfAbsent(vertex, new HashSet<>());
     }
+
+    // Добавить ребро в граф
 
     public void addEdge(Vertex from, Vertex to) {
         Edge edge = new Edge(from, to);
@@ -38,6 +46,8 @@ public class Graph {
         adjacencyList.get(to).add(edge);
 
     }
+
+    // Получить смежные вершины для заданной вершины
 
     public HashSet<Edge> getNeighbours(Vertex vertex) {
         return adjacencyList.get(vertex);

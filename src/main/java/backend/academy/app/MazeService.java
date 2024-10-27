@@ -96,6 +96,7 @@ public class MazeService {
         if (count == 0) {
             return;
         }
+        //получаем все проходы
         List<Coordinate> allNormalTypePassages =
             Arrays.stream(mazeListModel.mazeList()).map(Arrays::asList).flatMap(List::stream)
                 .filter(cell -> cell.type() == CellType.PASSAGE)
@@ -103,6 +104,7 @@ public class MazeService {
                 .map(cell -> new Coordinate(cell.row(), cell.col()))
                 .collect(Collectors.toList());
         int passageCount = allNormalTypePassages.size();
+        //если поверхностей больше, чем нужно, то добавляем их в количестве всех проходов
         int remainingCount = Math.min(count, passageCount);
         while (remainingCount > 0) {
             int index = random.nextInt(passageCount);

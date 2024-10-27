@@ -22,6 +22,7 @@ public class ToGraphConverter {
     private final Map<Coordinate, Vertex> coordinateVertexMap = new HashMap<>();
 
     public ConvertedMazeModel convertToGraph(MazeListModel mazeListModel) {
+        // Преобразуем модель лабиринта в модель графа
         Cell[][] mazeList = mazeListModel.mazeList();
         List<Cell> passageList = getPassageList(mazeList);
         addVertexToGraph(passageList);
@@ -32,6 +33,7 @@ public class ToGraphConverter {
     }
 
     private List<Cell> getPassageList(Cell[][] mazeList) {
+        // Получаем все проходы из лабиринта
         return Arrays.stream(mazeList)
             .flatMap(Arrays::stream)
             .filter(cell -> cell.type() == CellType.PASSAGE)
@@ -43,6 +45,7 @@ public class ToGraphConverter {
                 if (cell instanceof Passage passage) {
                     Coordinate coordinate = new Coordinate(cell.row(), cell.col());
                     Vertex vertex = new Vertex();
+                    // Устанавливаем вес вершины в зависимости от типа прохода
                     switch (passage.passageType()) {
                         case COIN -> vertex.weight(COIN_WEIGHT);
                         case SAND -> vertex.weight(SAND_WEIGHT);

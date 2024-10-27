@@ -17,6 +17,13 @@ public class GridGenerator {
     private final Map<Coordinate, List<Coordinate>> coordinateNeighbours = new HashMap<>();
 
     public MazeListModel getMazeListModel(Coordinate startCoordinate, int height, int width) {
+        /*
+        Создает сетку лабиринта
+        Сеткой будет являться каждая вторая клетка, чтобы оставить место для стен.
+        Для граничных случаев добавляем в сетку новую ячейку,
+        которая будет находиться между двумя соседними клетками.
+        */
+
         generateFullWallMaze(height, width);
         generateGrid(startCoordinate, height, width);
         addLinks(height, width);
@@ -26,6 +33,7 @@ public class GridGenerator {
     }
 
     private void generateFullWallMaze(int height, int width) {
+        //заполняет лабиринт стенами
         mazeList = new Cell[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -35,6 +43,7 @@ public class GridGenerator {
     }
 
     private void generateGrid(Coordinate startCoordinate, int height, int width) {
+        //Создает сетку лабиринта. Делаем шаг 2, чтобы оставить места для отрисовки стен
         int x = adjustCoordinate(startCoordinate.col());
         int y = adjustCoordinate(startCoordinate.row());
 
@@ -46,15 +55,21 @@ public class GridGenerator {
     }
 
     private void addLinks(int height, int width) {
+
+        // Получаем все координаты, которые являются проходами
         List<Coordinate> allCoordinates = coordinateNeighbours.keySet().stream().toList();
         allCoordinates
             .forEach(cord -> {
+                // Получаем соседей для каждой координаты
                 List<Coordinate> neighbours = getNeighbours(cord);
                 for (Coordinate neighbour : neighbours) {
+                    // Если соседняя координата находится в пределах лабиринта, добавляем её как соседа
                     if (isWithinBounds(neighbour, height, width)) {
                         addCoordinateNeighbour(cord, neighbour);
                     } else {
+                        // Если соседняя координата вне пределов лабиринта, находим среднюю координату между ними
                         Coordinate middleCoordinate = getMiddleCoordinate(cord, neighbour);
+                        // Если средняя координата находится в пределах лабиринта, добавляем её как соседа
                         if (isWithinBounds(middleCoordinate, height, width)) {
                             addCoordinateNeighbour(cord, middleCoordinate);
                             addCoordinateNeighbour(middleCoordinate, cord);
@@ -94,6 +109,7 @@ public class GridGenerator {
     }
 
     private int adjustCoordinate(int coordinate) {
+        // Чтобы удобно итерироваться по координатам, сдвигаем coordinate максимально в левый верхний угол
         int adjustedCoordinate = coordinate;
         while (adjustedCoordinate >= 2) {
             adjustedCoordinate -= 2;
