@@ -18,10 +18,12 @@ public class ToGraphConverter {
     private static final int SAND_WEIGHT = 0;
     private static final int NORMAL_WEIGHT = 1;
 
-    private final Graph graph = new Graph();
-    private final Map<Coordinate, Vertex> coordinateVertexMap = new HashMap<>();
+    private Graph graph;
+    private Map<Coordinate, Vertex> coordinateVertexMap;
 
     public ConvertedMazeModel convertToGraph(MazeListModel mazeListModel) {
+        graph = new Graph();
+        coordinateVertexMap = new HashMap<>();
         // Преобразуем модель лабиринта в модель графа
         Cell[][] mazeList = mazeListModel.mazeList();
         List<Cell> passageList = getPassageList(mazeList);
