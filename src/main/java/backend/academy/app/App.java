@@ -56,7 +56,8 @@ public class App {
         List<Coordinate> allowedCoordinates = maze.getAllPassage();
         Coordinate startCoordinate = settings.getStartCoordinate(allowedCoordinates);
         Coordinate finishCoordinate = settings.getFinishCoordinate(allowedCoordinates);
-        List<Coordinate> path = mazeService.searchPathInMaze(maze, startCoordinate, finishCoordinate, solver);
+        List<Coordinate> path =
+            mazeService.searchPathInMaze(maze, startCoordinate, finishCoordinate, solver, toGraphConverter);
         out.println(ui.render(maze, path));
     }
 }

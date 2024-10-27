@@ -68,13 +68,14 @@ public class MazeService {
         Maze maze,
         Coordinate startCoordinate,
         Coordinate finishCoordinate,
-        Solver solver
+        Solver solver,
+        ToGraphConverter toGraphConverter
     ) {
         //получаем лабиринт
         MazeListModel mazeListModel = maze.mazeListModel();
 
         //преобразуем лабиринт в граф
-        ConvertedMazeModel convertedMazeModel = new ToGraphConverter().convertToGraph(mazeListModel);
+        ConvertedMazeModel convertedMazeModel = toGraphConverter.convertToGraph(mazeListModel);
         //получаем стартовую и конечную вершины
         Vertex startVertex = convertedMazeModel.coordinateVertexMap().get(startCoordinate);
         Vertex finishVertex = convertedMazeModel.coordinateVertexMap().get(finishCoordinate);
@@ -92,6 +93,9 @@ public class MazeService {
     }
 
     public void addNewSurfaces(MazeListModel mazeListModel, PassageType passageType, int count) {
+        if (count == 0) {
+            return;
+        }
         List<Coordinate> allNormalTypePassages =
             Arrays.stream(mazeListModel.mazeList()).map(Arrays::asList).flatMap(List::stream)
                 .filter(cell -> cell.type() == CellType.PASSAGE)
