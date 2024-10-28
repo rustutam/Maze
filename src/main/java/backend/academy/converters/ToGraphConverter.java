@@ -18,17 +18,14 @@ public class ToGraphConverter {
     private static final int SAND_WEIGHT = 0;
     private static final int NORMAL_WEIGHT = 1;
 
-    private Graph graph;
-    private Map<Coordinate, Vertex> coordinateVertexMap;
-
     public ConvertedMazeModel convertToGraph(MazeListModel mazeListModel) {
-        graph = new Graph();
-        coordinateVertexMap = new HashMap<>();
+        Graph graph = new Graph();
+        Map<Coordinate, Vertex> coordinateVertexMap = new HashMap<>();
         // Преобразуем модель лабиринта в модель графа
         Cell[][] mazeList = mazeListModel.mazeList();
         List<Cell> passageList = getPassageList(mazeList);
-        addVertexToGraph(passageList);
-        addEdgesToGraph(mazeListModel);
+        addVertexToGraph(passageList, graph, coordinateVertexMap);
+        addEdgesToGraph(mazeListModel, graph, coordinateVertexMap);
 
         return new ConvertedMazeModel(graph, coordinateVertexMap, mazeListModel.height(), mazeListModel.width());
 
@@ -42,7 +39,7 @@ public class ToGraphConverter {
             .toList();
     }
 
-    private void addVertexToGraph(List<Cell> passageList) {
+    private void addVertexToGraph(List<Cell> passageList, Graph graph, Map<Coordinate, Vertex> coordinateVertexMap) {
         passageList.forEach(cell -> {
                 if (cell instanceof Passage passage) {
                     Coordinate coordinate = new Coordinate(cell.row(), cell.col());
@@ -62,19 +59,26 @@ public class ToGraphConverter {
         );
     }
 
-    private void addEdgesToGraph(MazeListModel mazeListModel) {
+    private void addEdgesToGraph(
+        MazeListModel mazeListModel,
+        Graph graph,
+        Map<Coordinate, Vertex> coordinateVertexMap
+    ) {
+
         graph.getVertices().forEach(vertex -> {
-            Coordinate coordinate = getCoordinateWithVertex(vertex);
+            Coordinate coordinate = getCoordinateWithVertex(vertex, coordinateVertexMap);
             List<Coordinate> neighbours = mazeListModel.coordinateNeighboursMap().get(coordinate);
-            neighbours.forEach(neighbourCoordinate -> {
-                Vertex neighbourVertex = coordinateVertexMap.get(neighbourCoordinate);
-                graph.addEdge(vertex, neighbourVertex);
-            });
+            if (neighbours != null) {
+                neighbours.forEach(neighbourCoordinate -> {
+                    Vertex neighbourVertex = coordinateVertexMap.get(neighbourCoordinate);
+                    graph.addEdge(vertex, neighbourVertex);
+                });
+            }
         });
 
     }
 
-    private Coordinate getCoordinateWithVertex(Vertex vertex) {
+    private Coordinate getCoordinateWithVertex(Vertex vertex, Map<Coordinate, Vertex> coordinateVertexMap) {
         return coordinateVertexMap.entrySet().stream()
             .filter(entry -> entry.getValue().equals(vertex))
             .map(Map.Entry::getKey)

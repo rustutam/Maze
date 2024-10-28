@@ -1,12 +1,19 @@
 package backend.academy.models;
 
-import java.util.ArrayList;
+import backend.academy.cell.Cell;
+import backend.academy.cell.CellType;
+import java.util.Arrays;
 import java.util.List;
 
 public record Maze(int height, int width, MazeListModel mazeListModel) {
-    // получить все проходы лабиринта
+
     public List<Coordinate> getAllPassage() {
-        return new ArrayList<>(mazeListModel.coordinateNeighboursMap().keySet());
+        Cell[][] mazeList = mazeListModel.mazeList();
+        return Arrays.stream(mazeList)
+            .flatMap(Arrays::stream)
+            .filter(cell -> cell.type() == CellType.PASSAGE)
+            .map(cell -> new Coordinate(cell.row(), cell.col()))
+            .toList();
     }
 
 }
