@@ -37,15 +37,15 @@ public class DijkstraSolver implements Solver {
         }
         // Устанавливаем начальные расстояния до всех вершин равным MIN_VALUE
         for (Vertex vertex : allVertex) {
-            distance.put(vertex, Integer.MIN_VALUE);
+            distance.put(vertex, Integer.MAX_VALUE);
         }
         // Устанавливаем расстояние до начальной вершины равным 0
         distance.put(startVertex, 0);
 
         // Пока не все вершины посещены
         while (visitedVertex.size() != allVertex.size()) {
-            // Находим вершину с максимальным расстоянием, которая ещё не посещена
-            Vertex currentVertex = getMaxDistanceVertex(distance, visitedVertex);
+            // Находим вершину с минимальным расстоянием, которая ещё не посещена
+            Vertex currentVertex = getMinDistanceVertex(distance, visitedVertex);
             visitedVertex.add(currentVertex);
             // Получаем соседей текущей вершины, которые ещё не посещены
             Set<Edge> neighbours = graph.getNeighbours(currentVertex).stream()
@@ -55,7 +55,7 @@ public class DijkstraSolver implements Solver {
             for (Edge edge : neighbours) {
                 Vertex neighbour = edge.getSecondVertex(currentVertex);
                 int newDistance = distance.get(currentVertex) + neighbour.weight();
-                if (newDistance > distance.get(neighbour)) {
+                if (newDistance < distance.get(neighbour)) {
                     distance.put(neighbour, newDistance);
                     predecessors.put(neighbour, currentVertex);
                 }
@@ -94,21 +94,21 @@ public class DijkstraSolver implements Solver {
      * @return вершина с максимальным расстоянием
      * @throws IllegalArgumentException если вершина не найдена
      */
-    Vertex getMaxDistanceVertex(Map<Vertex, Integer> distance, Set<Vertex> visitedVertex) {
-        Vertex maxVertex = null;
-        int minDistance = Integer.MIN_VALUE;
-        // Проходим по всем вершинам и находим ту, которая имеет максимальное расстояние и не была посещена
+    Vertex getMinDistanceVertex(Map<Vertex, Integer> distance, Set<Vertex> visitedVertex) {
+        Vertex minVertex = null;
+        int minDistance = Integer.MAX_VALUE;
+        // Проходим по всем вершинам и находим ту, которая имеет минимальное расстояние и не была посещена
         for (Map.Entry<Vertex, Integer> entry : distance.entrySet()) {
-            if (!visitedVertex.contains(entry.getKey()) && entry.getValue() > minDistance) {
+            if (!visitedVertex.contains(entry.getKey()) && entry.getValue() < minDistance) {
                 minDistance = entry.getValue();
-                maxVertex = entry.getKey();
+                minVertex = entry.getKey();
             }
         }
         // Если вершина не найдена, выбрасываем исключение
-        if (maxVertex == null) {
+        if (minVertex == null) {
             throw new IllegalArgumentException("No vertex found");
         }
-        return maxVertex;
+        return minVertex;
     }
 
 }
