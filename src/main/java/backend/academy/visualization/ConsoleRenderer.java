@@ -60,7 +60,22 @@ public class ConsoleRenderer implements Renderer {
                         sb.append(END);
                         continue;
                     } else {
-                        sb.append(PATH);
+                        // Отображаем монеты или песок поверх пути
+                        if (cell instanceof Passage psg) {
+                            switch (psg.passageType()) {
+                                case SAND:
+                                    sb.append(SAND);
+                                    break;
+                                case COIN:
+                                    sb.append(COIN);
+                                    break;
+                                default:
+                                    sb.append(PATH);
+                                    break;
+                            }
+                        } else {
+                            sb.append(PATH);
+                        }
                         continue;
                     }
                 }
