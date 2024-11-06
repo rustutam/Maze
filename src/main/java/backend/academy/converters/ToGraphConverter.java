@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 public class ToGraphConverter {
-    private static final int COIN_WEIGHT = 10;
-    private static final int SAND_WEIGHT = 0;
-    private static final int NORMAL_WEIGHT = 1;
+    private static final int COIN_WEIGHT = 0;
+    private static final int NORMAL_WEIGHT = 10;
+    private static final int SAND_WEIGHT = 100;
 
     public ConvertedMazeModel convertToGraph(MazeListModel mazeListModel) {
         Graph graph = new Graph();
