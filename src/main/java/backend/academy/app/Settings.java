@@ -2,6 +2,7 @@ package backend.academy.app;
 
 import backend.academy.generator.Generator;
 import backend.academy.generator.KruskalMazeGenerator;
+import backend.academy.generator.ModifiedKruskalMazeGenerator;
 import backend.academy.generator.PrimaMazeGenerator;
 import backend.academy.input.InputProvider;
 import backend.academy.models.Coordinate;
@@ -17,6 +18,7 @@ public class Settings {
     private final InputProvider inputProvider;
     private final PrintStream out;
     private static final String INVALID_INPUT_MESSAGE = "Некорректный ввод. Пожалуйста, введите числовое значение.";
+    private static final double EXTRA_EDGES_COEFFICIENT = 0.1;
 
     public Settings(InputProvider inputProvider, PrintStream out, SecureRandom random) {
 
@@ -55,8 +57,14 @@ public class Settings {
     public Generator getGenerateAlgorithm() {
         return getAlgorithm(
             "Выберите алгоритм генерации лабиринта:",
-            List.of("1 - Прима", "2 - Краскала"),
-            List.of(new PrimaMazeGenerator(random), new KruskalMazeGenerator(random))
+            List.of(
+                "1 - Прима",
+                "2 - Краскала",
+                "3 - Модифицированный Краскала(будет иметь циклы)"),
+            List.of(
+                new PrimaMazeGenerator(random),
+                new KruskalMazeGenerator(random),
+                new ModifiedKruskalMazeGenerator(random, EXTRA_EDGES_COEFFICIENT))
         );
     }
 
