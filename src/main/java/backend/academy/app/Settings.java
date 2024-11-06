@@ -124,7 +124,7 @@ public class Settings {
     }
 
     public Coordinate getFinishCoordinate(List<Coordinate> allowedCoordinates) {
-        return getCoordinate("Введите координаты конечной точки (x,y):", allowedCoordinates);
+        return getCoordinate("Введите координаты конечной точки x,y:", allowedCoordinates);
     }
 
     private int getCount(String prompt) {
