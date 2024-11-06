@@ -24,7 +24,7 @@ public class ModifiedKruskalMazeGenerator extends KruskalMazeGenerator {
         allEdges.removeAll(minGraph.getEdges());
 
         // Добавляем дополнительные рёбра
-        int extraEdgesCount = (int) (graph.getEdges().size() * extraEdgesCoefficient);
+        int extraEdgesCount = (int) (allEdges.size() * extraEdgesCoefficient);
 
         for (int i = 0; i < extraEdgesCount; i++) {
             if (allEdges.isEmpty()) {
